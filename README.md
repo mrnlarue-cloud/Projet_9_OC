@@ -26,70 +26,60 @@ Le projet devra permettre à un utilisateur de :
 
 ## Installation locale
 
-Cloner le repository :
+### 1. Cloner le repository
 
+```bash
 git clone https://github.com/mrnlarue-cloud/Projet_9_OC.git
+```
 
-Entrer dans le dossier du projet :
+### 2. Entrer dans le dossier du projet
 
+```bash
 cd Projet_9_OC
+```
 
-Créer un environnement virtuel :
+### 3. Créer un environnement virtuel
 
 Sur Windows :
 
+```powershell
 python -m venv venv
+```
 
 Sur macOS ou Linux :
 
+```bash
 python3 -m venv venv
+```
 
-Activer l'environnement virtuel :
+### 4. Activer l'environnement virtuel
 
 Sur Windows PowerShell :
 
+```powershell
 .\venv\Scripts\Activate.ps1
+```
 
 Sur macOS ou Linux :
 
+```bash
 source venv/bin/activate
+```
 
-Installer les dépendances :
+### 5. Installer les dépendances
 
+```bash
 pip install -r requirements.txt
+```
 
-Lancer le serveur de développement :
+### 6. Lancer le serveur de développement
 
+```bash
 python manage.py runserver
+```
 
 Le site est ensuite accessible à l'adresse suivante :
 
+```text
 http://127.0.0.1:8000/
-
-## État actuel du projet
-
-Le projet est en cours d'initialisation.
-
-Éléments déjà mis en place :
-
-- environnement virtuel local ;
-- fichier .gitignore ;
-- fichier README ;
-- installation de Django ;
-- fichier requirements.txt ;
-- création du projet Django ;
-- vérification du lancement du serveur local.
-
-Le projet Django utilise pour le moment un dossier de configuration nommé :
-
-configuration/
-
-Aucune application Django métier n'a encore été créée.
-
-Aucune migration n'a encore été effectuée.
-
-## Notes de développement
-
-Les migrations seront faites plus tard, après décision sur le modèle utilisateur personnalisé.
-
-Le fichier db.sqlite3 n'est donc pas encore versionné à ce stade du projet.
+```
