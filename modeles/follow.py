@@ -11,7 +11,9 @@ class Follow:
 
     def existe_deja(self, follows_existants):
         for follow in follows_existants:
-            meme_utilisateur = self.utilisateur.bon_utilisateur(follow.utilisateur)
+            meme_utilisateur = self.utilisateur.bon_utilisateur(
+                follow.utilisateur
+            )
             meme_utilisateur_suivi = self.utilisateur_suivi.bon_utilisateur(
                 follow.utilisateur_suivi
             )
