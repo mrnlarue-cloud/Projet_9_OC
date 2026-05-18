@@ -1,13 +1,29 @@
 class Follow:
     """Relation de follow entre deux utilisateurs."""
 
+    # ----------------------------
+    # Initialisation
+    # ----------------------------
+
     def __init__(self, utilisateur, utilisateur_suivi):
         self.utilisateur = utilisateur
         self.utilisateur_suivi = utilisateur_suivi
 
+    # ----------------------------
+    # Validation
+    # ----------------------------
+
+    def utilisateurs_valides(self):
+        utilisateur_existe = self.utilisateur is not None
+        utilisateur_suivi_existe = self.utilisateur_suivi is not None
+
+        return utilisateur_existe and utilisateur_suivi_existe
+
     def autofollow(self):
-        """Vérifie si un utilisateur essaie de se follow lui-même."""
-        return self.utilisateur.bon_utilisateur(self.utilisateur_suivi)
+        """Check utilisateur essaie de se follow lui-même."""
+        return self.utilisateur.bon_utilisateur(
+            self.utilisateur_suivi
+        )
 
     def existe_deja(self, follows_existants):
         for follow in follows_existants:
@@ -24,10 +40,14 @@ class Follow:
         return False
 
     def est_valide(self, follows_existants):
-        if self.autofollow():
-            return False
+        if self.utilisateurs_valides():
+            if self.autofollow():
+                return False
 
-        if self.existe_deja(follows_existants):
-            return False
+            if self.existe_deja(follows_existants):
+                return False
 
-        return True
+            return True
+
+        else:
+            return False
