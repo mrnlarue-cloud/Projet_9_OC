@@ -13,7 +13,9 @@ class Utilisateur:
     # ----------------------------
 
     def nom_valide(self):
-        return self.nom_utilisateur.strip() != ""
+        return (
+            isinstance(self.nom_utilisateur, str) and self.nom_utilisateur.strip() != ""
+        )
 
     def bon_utilisateur(self, autre_utilisateur):
         if autre_utilisateur is None:
@@ -75,6 +77,9 @@ class Utilisateur:
     # ----------------------------
 
     def suit_deja(self, utilisateur_suivi, follows_existants):
+        if utilisateur_suivi is None:
+            return False
+
         for follow in follows_existants:
             meme_utilisateur = self.bon_utilisateur(follow.utilisateur)
             meme_utilisateur_suivi = utilisateur_suivi.bon_utilisateur(
