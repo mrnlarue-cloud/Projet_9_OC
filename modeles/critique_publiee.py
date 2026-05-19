@@ -23,7 +23,10 @@ class CritiquePubliee:
         return isinstance(self.titre, str) and self.titre.strip() != ""
 
     def note_valide(self):
-        return self.note_minimale <= self.note <= self.note_maximale
+        return (
+            isinstance(self.note, int)
+            and self.note_minimale <= self.note <= self.note_maximale
+        )
 
     def auteur_valide(self):
         return self.auteur is not None
@@ -33,10 +36,10 @@ class CritiquePubliee:
 
     def est_valide(self):
         return (
-            self.titre_valide(),
-            self.note_valide(),
-            self.auteur_valide(),
-            self.demande_valide(),
+            self.titre_valide()
+            and self.note_valide()
+            and self.auteur_valide()
+            and self.demande_valide()
         )
 
     # ----------------------------
@@ -44,10 +47,10 @@ class CritiquePubliee:
     # ----------------------------
 
     def modifiable_par(self, utilisateur):
-        return utilisateur.est_auteur(self)
+        return utilisateur is not None and utilisateur.est_auteur(self)
 
     def supprimable_par(self, utilisateur):
-        return utilisateur.est_auteur(self)
+        return utilisateur is not None and utilisateur.est_auteur(self)
 
     # ----------------------------
     # Modification
@@ -69,14 +72,15 @@ class CritiquePubliee:
                 nouvelle_note = note
 
             titre_invalide = (
-                    not isinstance(nouveau_titre, str)
-                    or nouveau_titre.strip() == ""
+                not isinstance(nouveau_titre, str) or nouveau_titre.strip() == ""
             )
 
             note_invalide = (
-                    nouvelle_note < self.note_minimale
-                    or nouvelle_note > self.note_maximale
+                not isinstance(nouvelle_note, int)
+                or nouvelle_note < self.note_minimale
+                or nouvelle_note > self.note_maximale
             )
+
             if titre_invalide:
                 return False
 
