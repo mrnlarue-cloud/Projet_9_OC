@@ -1,5 +1,20 @@
+"""Modèle métier pur pour une critique publiée.
+
+Ce fichier représente une critique rédigée par un utilisateur en réponse
+à une demande de critique.
+
+La classe gère :
+- le titre de la critique ;
+- le commentaire de la critique ;
+- la note attribuée, entre 0 et 5 ;
+- l'auteur de la critique ;
+- la demande de critique associée ;
+- les droits de modification et de suppression.
+"""
+
+
 class CritiquePubliee:
-    """Critique publiée par un utilisateur"""
+    """Critique publiée par un utilisateur."""
 
     note_maximale = 5
     note_minimale = 0
