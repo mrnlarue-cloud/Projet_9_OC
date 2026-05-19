@@ -1,5 +1,20 @@
+"""Modèle métier pur pour une demande de critique.
+
+Ce fichier représente une demande créée par un utilisateur pour obtenir
+une critique sur un livre ou un article.
+
+La classe gère :
+- le titre de la demande ;
+- l'auteur de la demande ;
+- une description optionnelle ;
+- une image optionnelle ;
+- les droits de modification et de suppression ;
+- la vérification qu'un utilisateur peut publier une critique sur cette demande.
+"""
+
+
 class DemandeCritique:
-    """Demande de critique créée par un utilisateur"""
+    """Demande de critique créée par un utilisateur."""
 
     # ----------------------------
     # Initialisation
