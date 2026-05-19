@@ -29,10 +29,10 @@ class DemandeCritique:
     # ----------------------------
 
     def modifiable_par(self, utilisateur):
-        return utilisateur.est_auteur(self)
+        return utilisateur is not None and utilisateur.est_auteur(self)
 
     def supprimable_par(self, utilisateur):
-        return utilisateur.est_auteur(self)
+        return utilisateur is not None and utilisateur.est_auteur(self)
 
     # ----------------------------
     # Modification
@@ -62,8 +62,11 @@ class DemandeCritique:
     # ----------------------------
 
     def critique_existante(self, utilisateur, critiques_existantes):
+        if utilisateur is None:
+            return False
+
         for critique in critiques_existantes:
-            meme_auteur = critique.auteur == utilisateur
+            meme_auteur = utilisateur.bon_utilisateur(critique.auteur)
             meme_demande = critique.demande_critique == self
 
             if meme_auteur and meme_demande:
