@@ -20,16 +20,15 @@ class Follow:
         return utilisateur_existe and utilisateur_suivi_existe
 
     def autofollow(self):
-        """Check utilisateur essaie de se follow lui-même."""
-        return self.utilisateur.bon_utilisateur(
-            self.utilisateur_suivi
-        )
+        """Vérifie si l'utilisateur essaie de se suivre lui-même."""
+        if not self.utilisateurs_valides():
+            return False
+
+        return self.utilisateur.bon_utilisateur(self.utilisateur_suivi)
 
     def existe_deja(self, follows_existants):
         for follow in follows_existants:
-            meme_utilisateur = self.utilisateur.bon_utilisateur(
-                follow.utilisateur
-            )
+            meme_utilisateur = self.utilisateur.bon_utilisateur(follow.utilisateur)
             meme_utilisateur_suivi = self.utilisateur_suivi.bon_utilisateur(
                 follow.utilisateur_suivi
             )
