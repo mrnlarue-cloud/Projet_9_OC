@@ -1,3 +1,18 @@
+"""Modèle métier pur pour une relation de suivi.
+
+Ce fichier représente le lien entre un utilisateur et un autre utilisateur
+qu'il choisit de suivre.
+
+La classe gère :
+- l'utilisateur qui suit ;
+- l'utilisateur suivi ;
+- la vérification que les deux utilisateurs existent ;
+- l'interdiction de se suivre soi-même ;
+- l'interdiction de créer un doublon de suivi ;
+- la validation globale de la relation de suivi.
+"""
+
+
 class Follow:
     """Relation de follow entre deux utilisateurs."""
 
