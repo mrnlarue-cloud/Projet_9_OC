@@ -1,3 +1,17 @@
+"""Modèle métier pour un utilisateur LITRevu.
+
+Ce fichier représente un utilisateur inscrit sur l'application.
+
+La classe gère :
+- la validation du nom d'utilisateur ;
+- la comparaison entre deux utilisateurs ;
+- les droits sur les contenus créés ;
+- la possibilité de créer une demande de critique ;
+- la possibilité de publier une critique ;
+- la possibilité de suivre un autre utilisateur.
+"""
+
+
 class Utilisateur:
     """Utilisateur inscrit sur LITRevu."""
 
