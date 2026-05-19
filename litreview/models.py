@@ -1,0 +1,88 @@
+"""Modèles Django principaux de l'application LITRevu.
+
+Ce fichier contiendra les modèles reliés à la base de données :
+- l'utilisateur personnalisé ;
+- les demandes de critique ;
+- les critiques publiées ;
+- les relations de suivi entre utilisateurs.
+"""
+
+from django.conf import settings
+from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
+
+# ----------------------------
+# Utilisateur personnalisé
+# ----------------------------
+
+
+class User(AbstractUser):
+    """Utilisateur personnalisé de l'application LITRevu."""
+
+
+# ----------------------------
+# Demandes de critique
+# ----------------------------
+
+
+class Ticket(models.Model):
+    """Demande de critique créée par un utilisateur."""
+
+    title = models.CharField(max_length=128)
+    description = models.TextField(max_length=2048, blank=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to="tickets/", null=True, blank=True)
+    time_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """Retourne le titre du ticket."""
+        return self.title
+
+
+# ----------------------------
+# Critiques publiées
+# ----------------------------
+
+
+class Review(models.Model):
+    """Critique par un utilisateur"""
+
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField(
+        validators=[MinValueValidator(0), MaxValueValidator(5)]
+    )
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    headline = models.TextField(max_length=8192, blank=True)
+    time_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.headline
+
+
+# ----------------------------
+# Relations de suivi
+# ----------------------------
+
+
+class UserFollows(models.Model):
+    """Relation de suivi entre deux utilisateurs."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="following",
+    )
+    followed_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="followed_by",
+    )
+
+    class Meta:
+        """Contraintes."""
+
+        unique_together = ("user", "followed_user")
+
+    def __str__(self):
+        return f"{self.user} suit {self.followed_user}"
