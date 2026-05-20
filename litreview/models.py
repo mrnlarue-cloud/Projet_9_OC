@@ -1,6 +1,6 @@
 """Modèles Django principaux de l'application LITRevu.
 
-Ce fichier contiendra les modèles reliés à la base de données :
+Ce fichier contient les modèles reliés à la base de données :
 - l'utilisateur personnalisé ;
 - les demandes de critique ;
 - les critiques publiées ;
@@ -31,7 +31,11 @@ class Ticket(models.Model):
 
     title = models.CharField(max_length=128)
     description = models.TextField(max_length=2048, blank=True)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="tickets",
+    )
     image = models.ImageField(upload_to="tickets/", null=True, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
 
@@ -46,17 +50,32 @@ class Ticket(models.Model):
 
 
 class Review(models.Model):
-    """Critique par un utilisateur"""
+    """Critique publiée par un utilisateur."""
 
-    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE)
-    rating = models.PositiveIntegerField(
+    ticket = models.ForeignKey(
+        Ticket,
+        on_delete=models.CASCADE,
+        related_name="reviews",
+    )
+    rating = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(5)]
     )
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    headline = models.TextField(max_length=8192, blank=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="reviews",
+    )
+    headline = models.CharField(max_length=128, blank=False)
+    body = models.TextField(max_length=8192, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        """Contraintes."""
+
+        unique_together = ("ticket", "user")
+
     def __str__(self):
+        """Retourne le titre de la critique."""
         return self.headline
 
 
@@ -85,4 +104,5 @@ class UserFollows(models.Model):
         unique_together = ("user", "followed_user")
 
     def __str__(self):
+        """Retourne une phrase décrivant la relation de suivi."""
         return f"{self.user} suit {self.followed_user}"
