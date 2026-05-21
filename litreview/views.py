@@ -1,5 +1,6 @@
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.contrib.auth.forms import AuthenticationForm
 
 
@@ -10,8 +11,18 @@ def accueil(request):
 
 
 def connexion(request):
-    """Affiche le formulaire de connexion."""
-    formulaire_connexion = AuthenticationForm()
+    """Connecte l'utilisateur si les identifiants sont valides"""
+    if request.method == "POST":
+        formulaire_connexion = AuthenticationForm(request, data=request.POST)
+
+        if formulaire_connexion.is_valid():
+            utilisateur = formulaire_connexion.get_user()
+            login(request, utilisateur)
+            return redirect("accueil")
+
+    else:
+        formulaire_connexion = AuthenticationForm()
+
     return render(
         request,
         "pages/connexion.html",
