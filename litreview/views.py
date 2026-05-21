@@ -1,4 +1,4 @@
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 from django.contrib.auth.forms import AuthenticationForm
@@ -8,6 +8,12 @@ from django.contrib.auth.forms import AuthenticationForm
 def accueil(request):
     """Vue django pour obligation de connexion"""
     return render(request, "pages/accueil.html")
+
+
+@login_required
+def deconnexion(request):
+    logout(request)
+    return redirect("connexion")
 
 
 def connexion(request):
