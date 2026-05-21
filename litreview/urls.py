@@ -4,4 +4,5 @@ from litreview import views
 
 urlpatterns = [
     path("accueil/", views.accueil, name="accueil"),
+    path("connexion/", views.connexion, name="connexion"),
 ]
