@@ -1,5 +1,8 @@
+from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
+
+from litreview.models import Ticket
 
 
 class InscriptionForm(UserCreationForm):
@@ -8,3 +11,11 @@ class InscriptionForm(UserCreationForm):
     class Meta:
         model = get_user_model()
         fields = ["username"]
+
+
+class TicketForm(forms.ModelForm):
+    """Formulaire de création d'un ticket"""
+
+    class Meta:
+        model = Ticket
+        fields = ["title", "description", "image"]
