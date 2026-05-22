@@ -1,18 +1,19 @@
-<h1>LITRevu</h1>
+{% extends "pages/base.html" %}
 
-<h2>Inscription</h2>
+{% block content %}
+    <h1>LITRevu</h1>
 
-<form method="post">
-    {% csrf_token %}
-    {{ formulaire_inscription.as_p }}
+    <h2>Inscription</h2>
 
+    <form method="post">
+        {% csrf_token %}
+        {{ formulaire_inscription.as_p }}
 
-    <button type="submit">S'inscrire</button>
+        <button type="submit">S'inscrire</button>
+    </form>
 
-</form>
-
-<p>
-    Vous possédez déjà un compte ?
-    <a href="{% url 'connexion' %}">Se connecter</a>
-
-</p>
+    <p>
+        Vous possédez déjà un compte ?
+        <a href="{% url 'connexion' %}">Se connecter</a>
+    </p>
+{% endblock content %}
