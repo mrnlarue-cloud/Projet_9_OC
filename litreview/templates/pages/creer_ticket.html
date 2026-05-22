@@ -1,0 +1,23 @@
+{% extends "pages/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h1>Créer une demande d'avis</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ formulaire_ticket|crispy }}
+
+        <button type="submit" class="btn btn-primary">Envoyer</button>
+
+        <p class="mt-2">
+            Les champs marqués d'une
+            <span class="text-danger">*</span>
+            sont obligatoires.
+    </form>
+
+    <p>
+        <a href="{% url 'accueil' %}">Retour à l'accueil</a>
+    </p>
+{% endblock content %}
