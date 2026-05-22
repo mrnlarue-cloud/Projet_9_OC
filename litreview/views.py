@@ -3,10 +3,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import redirect, render
 
-from litreview.forms import InscriptionForm
+from litreview.forms import InscriptionForm, TicketForm
+from litreview.models import Ticket
 
 # ----------------------------
-# Page test utilisateur
+# Page utilisateur
 # ----------------------------
 
 
@@ -14,6 +15,34 @@ from litreview.forms import InscriptionForm
 def accueil(request):
     """Vue Django accessible uniquement après connexion."""
     return render(request, "pages/accueil.html")
+
+
+@login_required
+def creer_ticket(request):
+    """Création d'une demande d'avis utilisateur"""
+    if request.method == "POST":
+        formulaire_ticket = TicketForm(request.POST, request.FILES)
+
+        if formulaire_ticket.is_valid():
+            donnees = formulaire_ticket.cleaned_data()
+
+            Ticket.objects.create(
+                utilisateur=request.user,
+                titre=donnees["title"],
+                description=donnees["description"],
+                image=donnees["image"],
+            )
+
+            return redirect("accueil")
+
+        else:
+            formulaire_ticket = TicketForm()
+
+        return render(
+            request,
+            "pages/creer_ticket.html",
+            {formulaire_ticket: formulaire_ticket},
+        )
 
 
 # ----------------------------
