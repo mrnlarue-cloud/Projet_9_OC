@@ -1,0 +1,18 @@
+<h1>LITRevu</h1>
+
+<h2>Inscription</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ formulaire_inscription.as_p }}
+
+
+    <button type="submit">S'inscrire</button>
+
+</form>
+
+<p>
+    Vous possédez déjà un compte ?
+    <a href="{% url 'connexion' %}">Se connecter</a>
+
+</p>
