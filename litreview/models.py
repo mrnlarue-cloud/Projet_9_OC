@@ -39,6 +39,22 @@ class Ticket(models.Model):
     image = models.ImageField(upload_to="tickets/", null=True, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
 
+    @classmethod
+    def creer_ticket_suite_demande(
+        classe_ticket,
+        utilisateur,
+        titre,
+        description="",
+        image=None,
+    ):
+        """Crée un ticket associé à un utilisateur"""
+        return classe_ticket.objects.create(
+            user=utilisateur,
+            title=titre,
+            description=description,
+            image=image,
+        )
+
     def __str__(self):
         """Retourne le titre du ticket."""
         return self.title
