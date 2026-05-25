@@ -12,3 +12,6 @@ db.sqlite3
 .mypy_cache/
 .pytest_cache/
 .cache/
+
+# Fichiers médias uploadés par les utilisateurs
+media/
