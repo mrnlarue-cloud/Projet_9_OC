@@ -36,7 +36,7 @@ class Ticket(models.Model):
         on_delete=models.CASCADE,
         related_name="tickets",
     )
-    image = models.ImageField(upload_to="tickets/", null=True, blank=True)
+    image = models.ImageField(upload_to="tickets_images/", null=True, blank=True)
     time_created = models.DateTimeField(auto_now_add=True)
 
     @classmethod
