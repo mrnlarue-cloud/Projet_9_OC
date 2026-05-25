@@ -55,6 +55,11 @@ class Ticket(models.Model):
             image=image,
         )
 
+    @classmethod
+    def tickets_utilisateur(classe_ticket, utilisateur):
+        """Retourne les tickets d'un utilisateur du plus récent au plus ancien"""
+        return classe_ticket.objects.filter(user=utilisateur).order_by("-time_created")
+
     def __str__(self):
         """Retourne le titre du ticket."""
         return self.title

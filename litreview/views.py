@@ -13,8 +13,14 @@ from litreview.models import Ticket
 
 @login_required
 def accueil(request):
-    """Vue Django accessible uniquement après connexion."""
-    return render(request, "pages/accueil.html")
+    """Affichage des tickets de l'utilisateur"""
+    tickets_utilisateur = Ticket.tickets_utilisateur(request.user)
+
+    return render(
+        request,
+        "pages/accueil.html",
+        {"tickets_utilisateur": tickets_utilisateur},
+    )
 
 
 @login_required
