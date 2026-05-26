@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
-from litreview.models import Ticket
+from litreview.models import Ticket, Review
 
 
 class InscriptionForm(UserCreationForm):
@@ -23,4 +23,17 @@ class TicketForm(forms.ModelForm):
             "title": "Titre",
             "description": "Description",
             "image": "Image",
+        }
+
+
+class ReviewForm(forms.ModelForm):
+    """Formulaire de création d'une critique"""
+
+    class Meta:
+        model = Review
+        fields = ["headline", "body", "rating"]
+        labels = {
+            "headline": "Titre",
+            "body": "Commentaire",
+            "rating": "Notation",
         }
