@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import redirect, render
 
-from litreview.forms import InscriptionForm, TicketForm
+from litreview.forms import InscriptionForm, ReviewForm, TicketForm
 from litreview.models import Ticket
 
 # ----------------------------
@@ -48,6 +48,17 @@ def creer_ticket(request):
         request,
         "pages/creer_ticket.html",
         {"formulaire_ticket": formulaire_ticket},
+    )
+
+
+@login_required
+def creer_critique(request, ticket_id):
+    formulaire_critique = ReviewForm()
+
+    return render(
+        request,
+        "pages/creer_critique.html",
+        {"formulaire_critique": formulaire_critique},
     )
 
 
