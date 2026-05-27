@@ -60,6 +60,11 @@ class Ticket(models.Model):
         """Retourne les tickets d'un utilisateur du plus récent au plus ancien"""
         return classe_ticket.objects.filter(user=utilisateur).order_by("-time_created")
 
+    @classmethod
+    def ticket_par_id(classe_ticket, ticket_id):
+        """Retourne une requête filtrée sur l'ID"""
+        return classe_ticket.objects.filter(id=ticket_id)
+
     def __str__(self):
         """Retourne le titre du ticket."""
         return self.title

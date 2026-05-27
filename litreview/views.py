@@ -1,7 +1,7 @@
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from litreview.forms import InscriptionForm, ReviewForm, TicketForm
 from litreview.models import Ticket
@@ -53,12 +53,14 @@ def creer_ticket(request):
 
 @login_required
 def creer_critique(request, ticket_id):
+    """Prépare la création d'une critique en réponse à un ticket"""
+    ticket = get_object_or_404(Ticket.ticket_par_id(ticket_id))
     formulaire_critique = ReviewForm()
 
     return render(
         request,
         "pages/creer_critique.html",
-        {"formulaire_critique": formulaire_critique},
+        {"formulaire_critique": formulaire_critique, "ticket": ticket},
     )
 
 
