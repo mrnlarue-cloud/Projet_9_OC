@@ -3,7 +3,7 @@
 {% block content %}
     <h1>LITRevu</h1>
 
-    <p>Bienvenue.</p>
+    <p>Bienvenue {{ user.username }}.</p>
 
     <p>
         <a href="{% url 'creer_ticket' %}" class="btn btn-primary">
@@ -11,12 +11,20 @@
         </a>
     </p>
 
-    <h2>Mes demandes d'avis</h2>
+    <h2>Demandes d'avis visibles</h2>
 
     {% for ticket in tickets_utilisateur %}
         {% include "pages/temp_partiels/ticket.html" %}
     {% empty %}
-        <p>Vous n'avez pas encore créé de demande d'avis.</p>
+        <p>Aucune demande d'avis à afficher pour le moment.</p>
+    {% endfor %}
+
+    <h2>Critiques visibles</h2>
+
+    {% for review in critiques_utilisateur %}
+        {% include "pages/temp_partiels/review.html" %}
+    {% empty %}
+        <p>Aucune critique à afficher pour le moment.</p>
     {% endfor %}
 
     <p>
