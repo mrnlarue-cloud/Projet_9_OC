@@ -61,6 +61,20 @@ class Ticket(models.Model):
         return classe_ticket.objects.filter(user=utilisateur).order_by("-time_created")
 
     @classmethod
+    def tickets_visibles_utilisateur(classe_ticket, utilisateur):
+        """Retourne les tickets de l'utilisateur et des utilisateurs suivis."""
+        abonnements = UserFollows.objects.filter(user=utilisateur)
+
+        utilisateurs_visibles = {utilisateur}
+
+        for abonnement in abonnements:
+            utilisateurs_visibles.add(abonnement.followed_user)
+
+        return classe_ticket.objects.filter(user__in=utilisateurs_visibles).order_by(
+            "-time_created"
+        )
+
+    @classmethod
     def ticket_par_id(classe_ticket, ticket_id):
         """Retourne une requête filtrée sur l'ID"""
         return classe_ticket.objects.filter(id=ticket_id)

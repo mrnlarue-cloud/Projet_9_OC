@@ -14,7 +14,7 @@ from litreview.models import Ticket
 @login_required
 def accueil(request):
     """Affichage des tickets de l'utilisateur"""
-    tickets_utilisateur = Ticket.tickets_utilisateur(request.user)
+    tickets_utilisateur = Ticket.tickets_visibles_utilisateur(request.user)
 
     return render(
         request,
