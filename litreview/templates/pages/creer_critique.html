@@ -1,0 +1,24 @@
+{% extends "pages/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h1>Créer une critique</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ formulaire_critique|crispy }}
+
+        <button type="submit" class="btn btn-primary">Publier</button>
+
+        <p class="mt-2">
+            Les champs marqués d'une
+            <span class="text-danger">*</span>
+            sont obligatoires.
+        </p>
+    </form>
+
+    <p>
+        <a href="{% url 'accueil' %}">Retour à l'accueil</a>
+    </p>
+{% endblock content %}
