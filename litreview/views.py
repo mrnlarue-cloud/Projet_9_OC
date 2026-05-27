@@ -7,20 +7,29 @@ from litreview.forms import InscriptionForm, ReviewForm, TicketForm
 from litreview.models import Review, Ticket
 
 # ----------------------------
-# Page utilisateur
+# Accueil / flux
 # ----------------------------
 
 
 @login_required
 def accueil(request):
-    """Affichage des tickets de l'utilisateur"""
+    """Affichage des tickets et critiques visibles par l'utilisateur."""
     tickets_utilisateur = Ticket.tickets_visibles_utilisateur(request.user)
+    critiques_utilisateur = Review.critiques_visibles_utilisateur(request.user)
 
     return render(
         request,
         "pages/accueil.html",
-        {"tickets_utilisateur": tickets_utilisateur},
+        {
+            "tickets_utilisateur": tickets_utilisateur,
+            "critiques_utilisateur": critiques_utilisateur,
+        },
     )
+
+
+# ----------------------------
+# Tickets
+# ----------------------------
 
 
 @login_required
@@ -49,6 +58,11 @@ def creer_ticket(request):
         "pages/creer_ticket.html",
         {"formulaire_ticket": formulaire_ticket},
     )
+
+
+# ----------------------------
+# Critiques
+# ----------------------------
 
 
 @login_required

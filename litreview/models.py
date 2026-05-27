@@ -47,7 +47,7 @@ class Ticket(models.Model):
         description="",
         image=None,
     ):
-        """Crée un ticket associé à un utilisateur"""
+        """Crée un ticket associé à un utilisateur."""
         return classe_ticket.objects.create(
             user=utilisateur,
             title=titre,
@@ -57,7 +57,7 @@ class Ticket(models.Model):
 
     @classmethod
     def tickets_utilisateur(classe_ticket, utilisateur):
-        """Retourne les tickets d'un utilisateur du plus récent au plus ancien"""
+        """Retourne les tickets d'un utilisateur du plus récent au plus ancien."""
         return classe_ticket.objects.filter(user=utilisateur).order_by("-time_created")
 
     @classmethod
@@ -76,7 +76,7 @@ class Ticket(models.Model):
 
     @classmethod
     def ticket_par_id(classe_ticket, ticket_id):
-        """Retourne une requête filtrée sur l'ID"""
+        """Retourne une requête filtrée sur l'ID."""
         return classe_ticket.objects.filter(id=ticket_id)
 
     def __str__(self):
@@ -130,6 +130,20 @@ class Review(models.Model):
             headline=titre,
             body=commentaire,
             rating=note,
+        )
+
+    @classmethod
+    def critiques_visibles_utilisateur(classe_review, utilisateur):
+        """Retourne les critiques de l'utilisateur et des utilisateurs suivis."""
+        abonnements = UserFollows.objects.filter(user=utilisateur)
+
+        utilisateurs_visibles = {utilisateur}
+
+        for abonnement in abonnements:
+            utilisateurs_visibles.add(abonnement.followed_user)
+
+        return classe_review.objects.filter(user__in=utilisateurs_visibles).order_by(
+            "-time_created"
         )
 
     def __str__(self):
