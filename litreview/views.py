@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import get_object_or_404, redirect, render
 
 from litreview.forms import InscriptionForm, ReviewForm, TicketForm
-from litreview.models import Ticket
+from litreview.models import Review, Ticket
 
 # ----------------------------
 # Page utilisateur
@@ -53,9 +53,27 @@ def creer_ticket(request):
 
 @login_required
 def creer_critique(request, ticket_id):
-    """Prépare la création d'une critique en réponse à un ticket"""
+    """Crée une critique en réponse à un ticket."""
     ticket = get_object_or_404(Ticket.ticket_par_id(ticket_id))
-    formulaire_critique = ReviewForm()
+
+    if request.method == "POST":
+        formulaire_critique = ReviewForm(request.POST)
+
+        if formulaire_critique.is_valid():
+            donnees = formulaire_critique.cleaned_data
+
+            Review.creer_critique_en_reponse(
+                utilisateur=request.user,
+                ticket=ticket,
+                titre=donnees["headline"],
+                commentaire=donnees["body"],
+                note=donnees["rating"],
+            )
+
+            return redirect("accueil")
+
+    else:
+        formulaire_critique = ReviewForm()
 
     return render(
         request,

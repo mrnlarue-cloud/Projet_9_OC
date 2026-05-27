@@ -114,6 +114,24 @@ class Review(models.Model):
 
         unique_together = ("ticket", "user")
 
+    @classmethod
+    def creer_critique_en_reponse(
+        classe_review,
+        utilisateur,
+        ticket,
+        titre,
+        commentaire="",
+        note=0,
+    ):
+        """Crée une critique en réponse à un ticket."""
+        return classe_review.objects.create(
+            user=utilisateur,
+            ticket=ticket,
+            headline=titre,
+            body=commentaire,
+            rating=note,
+        )
+
     def __str__(self):
         """Retourne le titre de la critique."""
         return self.headline
