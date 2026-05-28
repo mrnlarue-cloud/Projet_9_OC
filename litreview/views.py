@@ -29,6 +29,23 @@ def accueil(request):
 
 
 # ----------------------------
+# Abonnements
+# ----------------------------
+
+
+@login_required
+def abonnements(request):
+    """Affiche les utilisateurs suivis par l'utilisateur."""
+    utilisateurs_suivis = request.user.utilisateurs_suivis()
+
+    return render(
+        request,
+        "pages/abonnements.html",
+        {"utilisateurs_suivis": utilisateurs_suivis},
+    )
+
+
+# ----------------------------
 # Tickets
 # ----------------------------
 

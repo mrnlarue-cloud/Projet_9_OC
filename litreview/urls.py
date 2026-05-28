@@ -8,6 +8,10 @@ urlpatterns = [
     # ----------------------------
     path("accueil/", views.accueil, name="accueil"),
     # ----------------------------
+    # Abonnements
+    # ----------------------------
+    path("abonnements/", views.abonnements, name="abonnements"),
+    # ----------------------------
     # Authentification
     # ----------------------------
     path("connexion/", views.connexion, name="connexion"),

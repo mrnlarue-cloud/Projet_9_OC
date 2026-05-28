@@ -1,0 +1,17 @@
+{% extends "pages/base.html" %}
+
+{% block content %}
+    <h1>Abonnements</h1>
+
+    <h2>Utilisateurs suivis</h2>
+
+    {% for utilisateur_suivi in utilisateurs_suivis %}
+        <p>{{ utilisateur_suivi.username }}</p>
+    {% empty %}
+        <p>Vous ne suivez personne pour le moment.</p>
+    {% endfor %}
+
+    <p>
+        <a href="{% url 'accueil' %}">Retour vers l'accueil</a>
+    </p>
+{% endblock content %}

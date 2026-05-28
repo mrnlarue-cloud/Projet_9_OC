@@ -31,6 +31,19 @@ class User(AbstractUser):
 
         return utilisateurs_visibles
 
+    def utilisateurs_suivis(self):
+        """Retourne les utilisateurs suivis par l'utilsateur"""
+        abonnements = UserFollows.objects.filter(user=self).select_related(
+            "followed_user"
+        )
+
+        utilisateurs = []
+
+        for abonnement in abonnements:
+            utilisateurs.append(abonnement.followed_user)
+
+        return utilisateurs
+
     def tickets_deja_critiques(self):
         """Retourne les IDs des tickets déjà critiqués."""
         critiques_utilisateur = Review.objects.filter(user=self)
