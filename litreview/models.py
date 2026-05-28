@@ -20,6 +20,61 @@ from django.db import models
 class User(AbstractUser):
     """Utilisateur personnalisé de l'application LITRevu."""
 
+    def utilisateurs_visibles(self):
+        """Retourne l'utilisateur et les utilisateurs suivis."""
+        abonnements = UserFollows.objects.filter(user=self)
+
+        utilisateurs_visibles = {self}
+
+        for abonnement in abonnements:
+            utilisateurs_visibles.add(abonnement.followed_user)
+
+        return utilisateurs_visibles
+
+    def contenus_flux_visible(self):
+        """Retourne les contenus visibles dans le flux."""
+        tickets_visibles = Ticket.tickets_visibles_utilisateur(self)
+        critiques_visibles = Review.critiques_visibles_utilisateur(self)
+        publications = self.publications_flux(
+            tickets_visibles=tickets_visibles,
+            critiques_visibles=critiques_visibles,
+        )
+
+        return {
+            "tickets": tickets_visibles,
+            "critiques": critiques_visibles,
+            "publications": publications,
+        }
+
+    def publications_flux(self, tickets_visibles, critiques_visibles):
+        """Retourne tickets et critiques dans une seule liste triée."""
+        publications = []
+
+        for ticket in tickets_visibles:
+            publications.append(
+                {
+                    "categorie": "ticket",
+                    "objet": ticket,
+                    "date": ticket.time_created,
+                }
+            )
+
+        for critique in critiques_visibles:
+            publications.append(
+                {
+                    "categorie": "critique",
+                    "objet": critique,
+                    "date": critique.time_created,
+                }
+            )
+
+        publications.sort(
+            key=lambda publication: publication["date"],
+            reverse=True,
+        )
+
+        return publications
+
 
 # ----------------------------
 # Demandes de critique
@@ -62,13 +117,8 @@ class Ticket(models.Model):
 
     @classmethod
     def tickets_visibles_utilisateur(classe_ticket, utilisateur):
-        """Retourne les tickets de l'utilisateur et des utilisateurs suivis."""
-        abonnements = UserFollows.objects.filter(user=utilisateur)
-
-        utilisateurs_visibles = {utilisateur}
-
-        for abonnement in abonnements:
-            utilisateurs_visibles.add(abonnement.followed_user)
+        """Retourne les tickets visibles dans le flux."""
+        utilisateurs_visibles = utilisateur.utilisateurs_visibles()
 
         return classe_ticket.objects.filter(user__in=utilisateurs_visibles).order_by(
             "-time_created"
@@ -134,15 +184,28 @@ class Review(models.Model):
 
     @classmethod
     def critiques_visibles_utilisateur(classe_review, utilisateur):
-        """Retourne les critiques de l'utilisateur et des utilisateurs suivis."""
-        abonnements = UserFollows.objects.filter(user=utilisateur)
+        """Retourne les critiques visibles dans le flux."""
+        utilisateurs_visibles = utilisateur.utilisateurs_visibles()
 
-        utilisateurs_visibles = {utilisateur}
+        critiques_utilisateurs_visibles = classe_review.objects.filter(
+            user__in=utilisateurs_visibles
+        )
 
-        for abonnement in abonnements:
-            utilisateurs_visibles.add(abonnement.followed_user)
+        tickets_utilisateur = Ticket.tickets_utilisateur(utilisateur)
 
-        return classe_review.objects.filter(user__in=utilisateurs_visibles).order_by(
+        critiques_sur_mes_tickets = classe_review.objects.filter(
+            ticket__in=tickets_utilisateur
+        )
+
+        ids_critiques_visibles = set()
+
+        for critique in critiques_utilisateurs_visibles:
+            ids_critiques_visibles.add(critique.id)
+
+        for critique in critiques_sur_mes_tickets:
+            ids_critiques_visibles.add(critique.id)
+
+        return classe_review.objects.filter(id__in=ids_critiques_visibles).order_by(
             "-time_created"
         )
 

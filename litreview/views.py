@@ -13,16 +13,16 @@ from litreview.models import Review, Ticket
 
 @login_required
 def accueil(request):
-    """Affichage des tickets et critiques visibles par l'utilisateur."""
-    tickets_utilisateur = Ticket.tickets_visibles_utilisateur(request.user)
-    critiques_utilisateur = Review.critiques_visibles_utilisateur(request.user)
+    """Affichage des contenus visibles par l'utilisateur."""
+    contenus_flux = request.user.contenus_flux_visible()
 
     return render(
         request,
         "pages/accueil.html",
         {
-            "tickets_utilisateur": tickets_utilisateur,
-            "critiques_utilisateur": critiques_utilisateur,
+            "tickets_utilisateur": contenus_flux["tickets"],
+            "critiques_utilisateur": contenus_flux["critiques"],
+            "publications": contenus_flux["publications"],
         },
     )
 
