@@ -11,20 +11,16 @@
         </a>
     </p>
 
-    <h2>Demandes d'avis visibles</h2>
+    <h2>Publications</h2>
 
-    {% for ticket in tickets_utilisateur %}
-        {% include "pages/temp_partiels/ticket.html" %}
+    {% for publication in publications %}
+        {% if publication.categorie == "ticket" %}
+            {% include "pages/temp_partiels/ticket.html" with ticket=publication.objet %}
+        {% elif publication.categorie == "critique" %}
+            {% include "pages/temp_partiels/review.html" with review=publication.objet %}
+        {% endif %}
     {% empty %}
-        <p>Aucune demande d'avis à afficher pour le moment.</p>
-    {% endfor %}
-
-    <h2>Critiques visibles</h2>
-
-    {% for review in critiques_utilisateur %}
-        {% include "pages/temp_partiels/review.html" %}
-    {% empty %}
-        <p>Aucune critique à afficher pour le moment.</p>
+        <p>Aucune publication à afficher pour le moment.</p>
     {% endfor %}
 
     <p>
