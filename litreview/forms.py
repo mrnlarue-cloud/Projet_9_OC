@@ -2,7 +2,11 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
-from litreview.models import Ticket, Review
+from litreview.models import Review, Ticket
+
+# ----------------------------
+# Inscription
+# ----------------------------
 
 
 class InscriptionForm(UserCreationForm):
@@ -13,8 +17,13 @@ class InscriptionForm(UserCreationForm):
         fields = ["username"]
 
 
+# ----------------------------
+# Tickets
+# ----------------------------
+
+
 class TicketForm(forms.ModelForm):
-    """Formulaire de création d'un ticket"""
+    """Formulaire de création d'un ticket."""
 
     class Meta:
         model = Ticket
@@ -26,8 +35,13 @@ class TicketForm(forms.ModelForm):
         }
 
 
+# ----------------------------
+# Critiques
+# ----------------------------
+
+
 class ReviewForm(forms.ModelForm):
-    """Formulaire de création d'une critique"""
+    """Formulaire de création d'une critique."""
 
     class Meta:
         model = Review
@@ -37,3 +51,17 @@ class ReviewForm(forms.ModelForm):
             "body": "Commentaire",
             "rating": "Notation",
         }
+
+
+# ----------------------------
+# Abonnements
+# ----------------------------
+
+
+class AbonnementForm(forms.Form):
+    """Formulaire pour suivre un utilisateur."""
+
+    username = forms.CharField(
+        label="Nom d'utilisateur",
+        max_length=150,
+    )
