@@ -3,11 +3,16 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import get_object_or_404, redirect, render
 
-from litreview.forms import InscriptionForm, ReviewForm, TicketForm
-from litreview.models import Review, Ticket
+from litreview.forms import (
+    AbonnementForm,
+    InscriptionForm,
+    ReviewForm,
+    TicketForm,
+)
+from litreview.models import Review, Ticket, UserFollows
 
 # ----------------------------
-# Accueil / flux
+# Accueil / publications
 # ----------------------------
 
 
@@ -35,13 +40,25 @@ def accueil(request):
 
 @login_required
 def abonnements(request):
-    """Affiche les utilisateurs suivis par l'utilisateur."""
-    utilisateurs_suivis = request.user.utilisateurs_suivis()
+    """Affiche les utilisateurs suivis et permet d'en suivre un nouveau."""
+    formulaire_abonnement = AbonnementForm(request.POST or None)
+
+    if request.method == "POST":
+        abonnement_ajoute = UserFollows.traiter_formulaire_abonnement(
+            utilisateur=request.user,
+            formulaire_abonnement=formulaire_abonnement,
+        )
+
+        if abonnement_ajoute:
+            return redirect("abonnements")
 
     return render(
         request,
         "pages/abonnements.html",
-        {"utilisateurs_suivis": utilisateurs_suivis},
+        {
+            "utilisateurs_suivis": request.user.utilisateurs_suivis(),
+            "formulaire_abonnement": formulaire_abonnement,
+        },
     )
 
 

@@ -271,6 +271,55 @@ class UserFollows(models.Model):
 
         unique_together = ("user", "followed_user")
 
+    @classmethod
+    def ajout_abonnement(classe_abonnement, utilisateur, username):
+        """Ajoute un abonnement à partir d'un nom d'utilisateur."""
+        try:
+            utilisateur_a_suivre = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return "Cet utilisateur n'existe pas."
+
+        if utilisateur_a_suivre == utilisateur:
+            return "Vous ne pouvez pas vous suivre vous-même."
+
+        abonnement_existe = classe_abonnement.objects.filter(
+            user=utilisateur,
+            followed_user=utilisateur_a_suivre,
+        ).exists()
+
+        if abonnement_existe:
+            return "Vous suivez déjà cet utilisateur."
+
+        classe_abonnement.objects.create(
+            user=utilisateur,
+            followed_user=utilisateur_a_suivre,
+        )
+
+        return None
+
+    @classmethod
+    def traiter_formulaire_abonnement(
+        classe_abonnement,
+        utilisateur,
+        formulaire_abonnement,
+    ):
+        """Traite le formulaire d'abonnement."""
+        if not formulaire_abonnement.is_valid():
+            return False
+
+        username = formulaire_abonnement.cleaned_data["username"]
+
+        erreur = classe_abonnement.ajout_abonnement(
+            utilisateur=utilisateur,
+            username=username,
+        )
+
+        if erreur:
+            formulaire_abonnement.add_error("username", erreur)
+            return False
+
+        return True
+
     def __str__(self):
         """Retourne une phrase décrivant la relation de suivi."""
         return f"{self.user} suit {self.followed_user}"
