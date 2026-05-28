@@ -31,6 +31,17 @@ class User(AbstractUser):
 
         return utilisateurs_visibles
 
+    def tickets_deja_critiques(self):
+        """Retourne les IDs des tickets déjà critiqués."""
+        critiques_utilisateur = Review.objects.filter(user=self)
+
+        ids_tickets = set()
+
+        for critique in critiques_utilisateur:
+            ids_tickets.add(critique.ticket.id)
+
+        return ids_tickets
+
     def contenus_flux_visible(self):
         """Retourne les contenus visibles dans le flux."""
         tickets_visibles = Ticket.tickets_visibles_utilisateur(self)
@@ -44,6 +55,7 @@ class User(AbstractUser):
             "tickets": tickets_visibles,
             "critiques": critiques_visibles,
             "publications": publications,
+            "tickets_deja_critiques": self.tickets_deja_critiques(),
         }
 
     def publications_flux(self, tickets_visibles, critiques_visibles):
