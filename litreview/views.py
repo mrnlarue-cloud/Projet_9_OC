@@ -71,6 +71,9 @@ def creer_critique(request, ticket_id):
     """Crée une critique en réponse à un ticket."""
     ticket = get_object_or_404(Ticket.ticket_par_id(ticket_id))
 
+    if Review.critique_deja_creee(request.user, ticket):
+        return redirect("accueil")
+
     if request.method == "POST":
         formulaire_critique = ReviewForm(request.POST)
 

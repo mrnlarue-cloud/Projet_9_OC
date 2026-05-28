@@ -195,6 +195,14 @@ class Review(models.Model):
         )
 
     @classmethod
+    def critique_deja_creee(classe_review, utilisateur, ticket):
+        """Check si une critique a déjà été faite par l'utilisateur."""
+        return classe_review.objects.filter(
+            user=utilisateur,
+            ticket=ticket,
+        ).exists()
+
+    @classmethod
     def critiques_visibles_utilisateur(classe_review, utilisateur):
         """Retourne les critiques visibles dans le flux."""
         utilisateurs_visibles = utilisateur.utilisateurs_visibles()
