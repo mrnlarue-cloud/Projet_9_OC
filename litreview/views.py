@@ -23,6 +23,7 @@ def accueil(request):
             "tickets_utilisateur": contenus_flux["tickets"],
             "critiques_utilisateur": contenus_flux["critiques"],
             "publications": contenus_flux["publications"],
+            "tickets_deja_critiques": contenus_flux["tickets_deja_critiques"],
         },
     )
 
