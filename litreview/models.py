@@ -262,6 +262,18 @@ class Review(models.Model):
             user=utilisateur,
         )
 
+    @classmethod
+    def critique_supprimable(classe_review, utilisateur, critique_id):
+        """Retourne la critique supprimable par l'utilisateur."""
+        return classe_review.objects.filter(
+            id=critique_id,
+            user=utilisateur,
+        )
+
+    def supprimer(self):
+        """Supprime la critique."""
+        self.delete()
+
     def modifier_avec_formulaire(self, formulaire_critique):
         """Modifie la critique si le formulaire est valide."""
         if not formulaire_critique.is_bound:

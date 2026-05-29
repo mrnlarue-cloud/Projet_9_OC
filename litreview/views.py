@@ -298,3 +298,36 @@ def modifier_critique(request, critique_id):
             "critique": critique,
         },
     )
+
+
+@login_required
+def confirmer_suppression_critique(request, critique_id):
+    """Affiche la confirmation de suppression d'une critique."""
+    critique = get_object_or_404(
+        Review.critique_supprimable(
+            utilisateur=request.user,
+            critique_id=critique_id,
+        )
+    )
+
+    return render(
+        request,
+        "pages/confirmer_suppression_critique.html",
+        {"critique": critique},
+    )
+
+
+@login_required
+@require_POST
+def supprimer_critique(request, critique_id):
+    """Supprime une critique créée par l'utilisateur."""
+    critique = get_object_or_404(
+        Review.critique_supprimable(
+            utilisateur=request.user,
+            critique_id=critique_id,
+        )
+    )
+
+    critique.supprimer()
+
+    return redirect("mes_posts")

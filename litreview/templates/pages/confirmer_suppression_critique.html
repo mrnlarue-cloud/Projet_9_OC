@@ -1,15 +1,15 @@
 {% extends "pages/base.html" %}
 
 {% block content %}
-    <h1>Supprimer votre ticket</h1>
+    <h1>Supprimer votre critique</h1>
 
-    <p>Êtes-vous certain de vouloir supprimer ce ticket ?</p>
+    <p>Êtes-vous certain de vouloir supprimer cette critique ?</p>
 
-    {% include "pages/temp_partiels/ticket_reponse.html" with ticket=ticket %}
+    {% include "pages/temp_partiels/review.html" with review=critique %}
 
     <form
         method="post"
-        action="{% url 'supprimer_ticket' ticket.id %}"
+        action="{% url 'supprimer_critique' critique.id %}"
     >
         {% csrf_token %}
 

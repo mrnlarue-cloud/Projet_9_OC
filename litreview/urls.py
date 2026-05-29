@@ -64,4 +64,14 @@ urlpatterns = [
         views.modifier_critique,
         name="modifier_critique",
     ),
+    path(
+        "supprimer-critique/<int:critique_id>/",
+        views.confirmer_suppression_critique,
+        name="confirmer_suppression_critique",
+    ),
+    path(
+        "supprimer-critique/<int:critique_id>/confirmer/",
+        views.supprimer_critique,
+        name="supprimer_critique",
+    ),
 ]

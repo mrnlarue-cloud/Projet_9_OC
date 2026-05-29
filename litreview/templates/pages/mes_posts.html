@@ -23,7 +23,7 @@
                 </a>
 
             </p>
-        {% elif publication.categorie == "critique" %}
+                {% elif publication.categorie == "critique" %}
             {% include "pages/temp_partiels/review.html" with review=publication.objet %}
 
             <p>
@@ -32,6 +32,13 @@
                     class="btn btn-primary"
                 >
                     Modifier
+                </a>
+
+                <a
+                    href="{% url 'confirmer_suppression_critique' publication.objet.id %}"
+                    class="btn btn-primary"
+                >
+                    Supprimer
                 </a>
             </p>
         {% endif %}
