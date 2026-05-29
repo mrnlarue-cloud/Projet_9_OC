@@ -320,6 +320,21 @@ class UserFollows(models.Model):
 
         return True
 
+    @classmethod
+    def supprimer_abonnement(
+        classe_abonnement,
+        utilisateur,
+        utilisateur_suivi_id,
+    ):
+        """Supprime un follow."""
+        abonnement = classe_abonnement.objects.filter(
+            user=utilisateur,
+            followed_user_id=utilisateur_suivi_id,
+        ).first()
+
+        if abonnement:
+            abonnement.delete()
+
     def __str__(self):
         """Retourne une phrase décrivant la relation de suivi."""
         return f"{self.user} suit {self.followed_user}"

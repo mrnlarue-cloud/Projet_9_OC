@@ -13,6 +13,12 @@ urlpatterns = [
         name="racine",
     ),
     # ----------------------------
+    # Authentification
+    # ----------------------------
+    path("connexion/", views.connexion, name="connexion"),
+    path("deconnexion/", views.deconnexion, name="deconnexion"),
+    path("inscription/", views.inscription, name="inscription"),
+    # ----------------------------
     # Page utilisateur
     # ----------------------------
     path("accueil/", views.accueil, name="accueil"),
@@ -20,12 +26,11 @@ urlpatterns = [
     # Abonnements
     # ----------------------------
     path("abonnements/", views.abonnements, name="abonnements"),
-    # ----------------------------
-    # Authentification
-    # ----------------------------
-    path("connexion/", views.connexion, name="connexion"),
-    path("deconnexion/", views.deconnexion, name="deconnexion"),
-    path("inscription/", views.inscription, name="inscription"),
+    path(
+        "desabonnement/<int:utilisateur_suivi_id>/",
+        views.desabonnement,
+        name="desabonnement",
+    ),
     # ----------------------------
     # Tickets
     # ----------------------------

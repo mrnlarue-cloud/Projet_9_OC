@@ -18,8 +18,22 @@
     <h2>Utilisateurs suivis</h2>
 
     {% for utilisateur_suivi in utilisateurs_suivis %}
-        <p>{{ utilisateur_suivi.username }}</p>
+        <div class="mb-3">
+            <p class="mb-1">{{ utilisateur_suivi.username }}</p>
+
+            <form
+                method="post"
+                action="{% url 'desabonnement' utilisateur_suivi.id %}"
+            >
+                {% csrf_token %}
+
+                <button type="submit" class="btn btn-primary">
+                    Se désabonner
+                </button>
+            </form>
+        </div>
     {% empty %}
+
         <p>Vous ne suivez personne pour le moment.</p>
     {% endfor %}
 
