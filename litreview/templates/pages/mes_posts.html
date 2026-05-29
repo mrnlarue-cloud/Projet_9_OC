@@ -1,0 +1,15 @@
+{% extends "pages/base.html" %}
+
+{% block content %}
+    <h1>Mes posts</h1>
+
+    {% for publication in publications %}
+        {% if publication.categorie == "ticket" %}
+            {% include "pages/temp_partiels/ticket_reponse.html" with ticket=publication.objet %}
+        {% elif publication.categorie == "critique" %}
+            {% include "pages/temp_partiels/review.html" with review=publication.objet %}
+        {% endif %}
+    {% empty %}
+        <p>Vous n'avez encore publié aucun contenu.</p>
+    {% endfor %}
+{% endblock content %}

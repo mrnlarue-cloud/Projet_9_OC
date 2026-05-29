@@ -71,6 +71,16 @@ class User(AbstractUser):
             "tickets_deja_critiques": self.tickets_deja_critiques(),
         }
 
+    def publications_utilisateur(self):
+        """Retourne les tickets et critiques créés par l'utilisateur."""
+        tickets_utilisateur = Ticket.tickets_utilisateur(self)
+        critiques_utilisateur = Review.critiques_utilisateur(self)
+
+        return self.publications_flux(
+            tickets_visibles=tickets_utilisateur,
+            critiques_visibles=critiques_utilisateur,
+        )
+
     def publications_flux(self, tickets_visibles, critiques_visibles):
         """Retourne tickets et critiques dans une seule liste triée."""
         publications = []
@@ -214,6 +224,11 @@ class Review(models.Model):
             user=utilisateur,
             ticket=ticket,
         ).exists()
+
+    @classmethod
+    def critiques_utilisateur(classe_review, utilisateur):
+        """Retourne les critiques d'un utilisateur."""
+        return classe_review.objects.filter(user=utilisateur).order_by("-time_created")
 
     @classmethod
     def critiques_visibles_utilisateur(classe_review, utilisateur):

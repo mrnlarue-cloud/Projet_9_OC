@@ -22,6 +22,7 @@ urlpatterns = [
     # Page utilisateur
     # ----------------------------
     path("accueil/", views.accueil, name="accueil"),
+    path("mes-posts/", views.mes_posts, name="mes_posts"),
     # ----------------------------
     # Abonnements
     # ----------------------------

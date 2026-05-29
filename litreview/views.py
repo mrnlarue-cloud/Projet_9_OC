@@ -86,6 +86,16 @@ def accueil(request):
     )
 
 
+@login_required
+def mes_posts(request):
+    """Affiche les tickets et critiques créés par l'utilisateur."""
+    return render(
+        request,
+        "pages/mes_posts.html",
+        {"publications": request.user.publications_utilisateur()},
+    )
+
+
 # ----------------------------
 # Abonnements / Désabonnements
 # ----------------------------
