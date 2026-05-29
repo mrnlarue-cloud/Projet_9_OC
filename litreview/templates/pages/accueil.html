@@ -9,11 +9,6 @@
         <a href="{% url 'creer_ticket' %}" class="btn btn-primary">
             Créer une demande d'avis
         </a>
-
-        <a href="{% url 'abonnements' %}" class="btn btn-primary">
-            Abonnements
-    </a>
-
     </p>
 
     <h2>Publications</h2>
@@ -27,8 +22,4 @@
     {% empty %}
         <p>Aucune publication à afficher pour le moment.</p>
     {% endfor %}
-
-    <p>
-        <a href="{% url 'deconnexion' %}">Se déconnecter</a>
-    </p>
 {% endblock content %}

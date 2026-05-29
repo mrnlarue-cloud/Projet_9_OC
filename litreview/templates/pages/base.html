@@ -16,6 +16,22 @@
 </head>
 <body>
     <main class="container mt-4">
+        {% if user.is_authenticated %}
+            <nav class="mb-4 pb-3 border-bottom">
+                <a href="{% url 'accueil' %}" class="me-3 text-decoration-none">
+                    Accueil
+                </a>
+
+                <a href="{% url 'abonnements' %}" class="me-3 text-decoration-none">
+                    Abonnements
+                </a>
+
+                <a href="{% url 'deconnexion' %}" class="text-decoration-none">
+                    Se déconnecter
+                </a>
+            </nav>
+        {% endif %}
+
         {% block content %}
         {% endblock content %}
     </main>
