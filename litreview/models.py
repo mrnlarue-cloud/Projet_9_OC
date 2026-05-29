@@ -172,6 +172,13 @@ class Ticket(models.Model):
             user=utilisateur,
         )
 
+    @classmethod
+    def ticket_supprimable(classe_ticket, utilisateur, ticket_id):
+        return classe_ticket.objects.filter(
+            id=ticket_id,
+            user=utilisateur,
+        )
+
     def modifier_avec_formulaire(self, formulaire_ticket):
         """Modifie le ticket si le formulaire est valide."""
         if not formulaire_ticket.is_bound:
@@ -182,6 +189,9 @@ class Ticket(models.Model):
 
         formulaire_ticket.save()
         return True
+
+    def supprimer(self):
+        self.delete()
 
     def __str__(self):
         """Retourne le titre du ticket."""

@@ -196,6 +196,43 @@ def modifier_ticket(request, ticket_id):
     )
 
 
+@login_required
+def confirmer_suppression_ticket(request, ticket_id):
+    """Affiche la page de confirmation de suppression d'un ticket."""
+    ticket = get_object_or_404(
+        Ticket.ticket_supprimable(
+            utilisateur=request.user,
+            ticket_id=ticket_id,
+        )
+    )
+
+    return render(
+        request,
+        "pages/confirmer_suppression_ticket.html",
+        {"ticket": ticket},
+    )
+
+    return render(
+        request,
+        "pages/confirmer_suppression_ticket.html",
+        {"ticket": ticket},
+    )
+
+
+@login_required
+@require_POST
+def supprimer_ticket(request, ticket_id):
+    ticket = get_object_or_404(
+        Ticket.ticket_supprimable(
+            utilisateur=request.user,
+            ticket_id=ticket_id,
+        )
+    )
+    ticket.supprimer()
+
+    return redirect("mes_posts")
+
+
 # ----------------------------
 # Critiques
 # ----------------------------

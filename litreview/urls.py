@@ -41,6 +41,16 @@ urlpatterns = [
         views.modifier_ticket,
         name="modifier_ticket",
     ),
+    path(
+        "supprimer-ticket/<int:ticket_id>/",
+        views.confirmer_suppression_ticket,
+        name="confirmer_suppression_ticket",
+    ),
+    path(
+        "supprimer-ticket/<int:ticket_id>/confirmer/",
+        views.supprimer_ticket,
+        name="supprimer_ticket",
+    ),
     # ----------------------------
     # Critiques
     # ----------------------------

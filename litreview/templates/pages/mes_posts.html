@@ -14,6 +14,14 @@
                 >
                     Modifier
                 </a>
+
+                <a
+                    href="{% url 'confirmer_suppression_ticket' publication.objet.id %}"
+                    class="btn btn-primary"
+                >
+                    Supprimer
+                </a>
+
             </p>
         {% elif publication.categorie == "critique" %}
             {% include "pages/temp_partiels/review.html" with review=publication.objet %}

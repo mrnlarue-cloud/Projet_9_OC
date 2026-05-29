@@ -1,0 +1,24 @@
+{% extends "pages/base.html" %}
+
+{% block content %}
+    <h1>Supprimer votre ticket</h1>
+
+    <p>Êtes-vous sûre de vouloir supprimer ce ticket ?</p>
+
+    {% include "pages/temp_partiels/ticket_reponse.html" with ticket=ticket %}
+
+    <form
+        method="post"
+        action="{% url 'supprimer_ticket' ticket.id %}"
+    >
+        {% csrf_token %}
+
+        <button type="submit" class="btn btn-primary">
+            Confirmer la suppression
+        </button>
+    </form>
+
+    <p class="mt-3">
+        <a href="{% url 'mes_posts' %}">Annuler et retourner à mes posts</a>
+    </p>
+{% endblock content %}
