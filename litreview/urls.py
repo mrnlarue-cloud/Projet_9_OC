@@ -1,8 +1,17 @@
 from django.urls import path
+from django.views.generic import RedirectView
 
 from litreview import views
 
 urlpatterns = [
+    # ----------------------------
+    # Racine du site
+    # ----------------------------
+    path(
+        "",
+        RedirectView.as_view(pattern_name="accueil", permanent=False),
+        name="racine",
+    ),
     # ----------------------------
     # Page utilisateur
     # ----------------------------
