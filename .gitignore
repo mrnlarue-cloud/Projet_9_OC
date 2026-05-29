@@ -5,9 +5,6 @@ venv/
 __pycache__/
 *.pyc
 
-# Base de données locale temporaire
-db.sqlite3
-
 # Outils qualité du code
 .mypy_cache/
 .pytest_cache/
