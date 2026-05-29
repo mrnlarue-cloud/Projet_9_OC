@@ -1,7 +1,19 @@
 {% extends "pages/base.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
     <h1>Abonnements</h1>
+
+    <h2>Suivre d'autres utilisateurs</h2>
+
+    <form method="post" class="mb-4">
+        {% csrf_token %}
+
+        {{ formulaire_abonnement|crispy }}
+
+        <button type="submit" class="btn btn-primary">Suivre</button>
+    </form>
+
 
     <h2>Utilisateurs suivis</h2>
 
