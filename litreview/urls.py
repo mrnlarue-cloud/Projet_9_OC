@@ -36,6 +36,11 @@ urlpatterns = [
     # Tickets
     # ----------------------------
     path("creer-ticket/", views.creer_ticket, name="creer_ticket"),
+    path(
+        "modifier-ticket/<int:ticket_id>/",
+        views.modifier_ticket,
+        name="modifier_ticket",
+    ),
     # ----------------------------
     # Critiques
     # ----------------------------

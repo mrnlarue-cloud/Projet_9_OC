@@ -6,6 +6,15 @@
     {% for publication in publications %}
         {% if publication.categorie == "ticket" %}
             {% include "pages/temp_partiels/ticket_reponse.html" with ticket=publication.objet %}
+
+            <p>
+                <a
+                    href="{% url 'modifier_ticket' publication.objet.id %}"
+                    class="btn btn-primary"
+                >
+                    Modifier
+                </a>
+            </p>
         {% elif publication.categorie == "critique" %}
             {% include "pages/temp_partiels/review.html" with review=publication.objet %}
         {% endif %}

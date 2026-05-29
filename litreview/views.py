@@ -170,6 +170,36 @@ def creer_ticket(request):
     )
 
 
+@login_required
+def modifier_ticket(request, ticket_id):
+    """Modifie un ticket créé par l'utilisateur."""
+    ticket = get_object_or_404(
+        Ticket.ticket_modifiable(
+            utilisateur=request.user,
+            ticket_id=ticket_id,
+        )
+    )
+
+    if request.method == "POST":
+        formulaire_ticket = TicketForm(
+            request.POST,
+            request.FILES,
+            instance=ticket,
+        )
+
+        if ticket.modifier_avec_formulaire(formulaire_ticket):
+            return redirect("mes_posts")
+
+    else:
+        formulaire_ticket = TicketForm(instance=ticket)
+
+    return render(
+        request,
+        "pages/modifier_ticket.html",
+        {"formulaire_ticket": formulaire_ticket},
+    )
+
+
 # ----------------------------
 # Critiques
 # ----------------------------

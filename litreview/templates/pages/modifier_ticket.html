@@ -1,0 +1,20 @@
+{% extends "pages/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h1>Modifier votre ticket</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        {{ formulaire_ticket|crispy }}
+
+        <button type="submit" class="btn btn-primary">
+            Enregistrer
+        </button>
+    </form>
+
+    <p class="mt-3">
+        <a href="{% url 'mes_posts' %}">Retour à mes posts</a>
+    </p>
+{% endblock content %}

@@ -164,6 +164,22 @@ class Ticket(models.Model):
         """Retourne une requête filtrée sur l'ID."""
         return classe_ticket.objects.filter(id=ticket_id)
 
+    @classmethod
+    def ticket_modifiable(classe_ticket, utilisateur, ticket_id):
+        """Retourne le ticket modifiable par l'utilisateur."""
+        return classe_ticket.objects.filter(
+            id=ticket_id,
+            user=utilisateur,
+        )
+
+    def modifier_avec_formulaire(self, formulaire_ticket):
+        """Modifie le ticket si le formulaire est valide."""
+        if not formulaire_ticket.is_valid():
+            return False
+
+        formulaire_ticket.save()
+        return True
+
     def __str__(self):
         """Retourne le titre du ticket."""
         return self.title
