@@ -49,4 +49,9 @@ urlpatterns = [
         views.creer_critique,
         name="creer_critique",
     ),
+    path(
+        "modifier-critique/<int:critique_id>/",
+        views.modifier_critique,
+        name="modifier_critique",
+    ),
 ]

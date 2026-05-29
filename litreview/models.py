@@ -174,6 +174,9 @@ class Ticket(models.Model):
 
     def modifier_avec_formulaire(self, formulaire_ticket):
         """Modifie le ticket si le formulaire est valide."""
+        if not formulaire_ticket.is_bound:
+            return False
+
         if not formulaire_ticket.is_valid():
             return False
 
@@ -240,6 +243,25 @@ class Review(models.Model):
             user=utilisateur,
             ticket=ticket,
         ).exists()
+
+    @classmethod
+    def critique_modifiable(classe_review, utilisateur, critique_id):
+        """Retourne la critique modifiable par l'utilisateur."""
+        return classe_review.objects.filter(
+            id=critique_id,
+            user=utilisateur,
+        )
+
+    def modifier_avec_formulaire(self, formulaire_critique):
+        """Modifie la critique si le formulaire est valide."""
+        if not formulaire_critique.is_bound:
+            return False
+
+        if not formulaire_critique.is_valid():
+            return False
+
+        formulaire_critique.save()
+        return True
 
     @classmethod
     def critiques_utilisateur(classe_review, utilisateur):

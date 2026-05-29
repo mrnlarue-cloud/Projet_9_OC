@@ -180,18 +180,14 @@ def modifier_ticket(request, ticket_id):
         )
     )
 
-    if request.method == "POST":
-        formulaire_ticket = TicketForm(
-            request.POST,
-            request.FILES,
-            instance=ticket,
-        )
+    formulaire_ticket = TicketForm(
+        request.POST or None,
+        request.FILES or None,
+        instance=ticket,
+    )
 
-        if ticket.modifier_avec_formulaire(formulaire_ticket):
-            return redirect("mes_posts")
-
-    else:
-        formulaire_ticket = TicketForm(instance=ticket)
+    if ticket.modifier_avec_formulaire(formulaire_ticket):
+        return redirect("mes_posts")
 
     return render(
         request,
@@ -236,4 +232,32 @@ def creer_critique(request, ticket_id):
         request,
         "pages/creer_critique.html",
         {"formulaire_critique": formulaire_critique, "ticket": ticket},
+    )
+
+
+@login_required
+def modifier_critique(request, critique_id):
+    """Modifie une critique créée par l'utilisateur."""
+    critique = get_object_or_404(
+        Review.critique_modifiable(
+            utilisateur=request.user,
+            critique_id=critique_id,
+        )
+    )
+
+    formulaire_critique = ReviewForm(
+        request.POST or None,
+        instance=critique,
+    )
+
+    if critique.modifier_avec_formulaire(formulaire_critique):
+        return redirect("mes_posts")
+
+    return render(
+        request,
+        "pages/modifier_critique.html",
+        {
+            "formulaire_critique": formulaire_critique,
+            "critique": critique,
+        },
     )

@@ -17,6 +17,15 @@
             </p>
         {% elif publication.categorie == "critique" %}
             {% include "pages/temp_partiels/review.html" with review=publication.objet %}
+
+            <p>
+                <a
+                    href="{% url 'modifier_critique' publication.objet.id %}"
+                    class="btn btn-primary"
+                >
+                    Modifier
+                </a>
+            </p>
         {% endif %}
     {% empty %}
         <p>Vous n'avez encore publié aucun contenu.</p>
