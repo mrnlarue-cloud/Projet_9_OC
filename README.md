@@ -3,7 +3,7 @@
 Application web développée avec Django dans le cadre du projet 9 du parcours Python OpenClassrooms.
 
 LITRevu permet à des utilisateurs de demander, publier et consulter des critiques de livres ou d'articles.  
-Chaque utilisateur dispose d'un flux personnalisé basé sur ses propres publications, les utilisateurs qu'il suit, et les critiques reçues sur ses demandes.
+Chaque utilisateur dispose d'un flux personnalisé basé sur ses propres publications, les utilisateurs qu'il suit, et les critiques reçues à sa demande.
 
 ---
 
@@ -11,34 +11,38 @@ Chaque utilisateur dispose d'un flux personnalisé basé sur ses propres publica
 
 1. [Objectif du projet](#objectif-du-projet)
 2. [Fonctionnalités](#fonctionnalités)
-3. [Technologies utilisées](#technologies-utilisées)
-4. [Installation locale](#installation-locale)
-5. [Lancement du projet](#lancement-du-projet)
-6. [Utilisation de l'application](#utilisation-de-lapplication)
-7. [Structure du projet](#structure-du-projet)
-8. [Base de données et fichiers médias](#base-de-données-et-fichiers-médias)
-9. [Qualité du code](#qualité-du-code)
-10. [Commandes utiles](#commandes-utiles)
-11. [Auteur](#auteur)
+3. [Comptes de test](#comptes-de-test)
+4. [Technologies utilisées](#technologies-utilisées)
+5. [Installation locale](#installation-locale)
+6. [Lancement du projet](#lancement-du-projet)
+7. [Utilisation de l'application](#utilisation-de-lapplication)
+8. [Structure du projet](#structure-du-projet)
+9. [Base de données et fichiers médias](#base-de-données-et-fichiers-médias)
+10. [Qualité du code](#qualité-du-code)
+11. [Commandes utiles](#commandes-utiles)
+12. [Notes de développement](#notes-de-développement)
+13. [Auteur](#auteur)
 
 ---
 
 ## Objectif du projet
 
-Le projet LITRevu a pour objectif de créer une application web permettant à des utilisateurs de :
+Le projet LITRevu a pour objectif de créer une application web permettant à ses utilisateurs de :
 
-- demander des critiques de livres ou d'articles ;
-- publier des critiques ;
-- répondre à des demandes de critique ;
-- suivre d'autres utilisateurs ;
-- consulter un flux personnalisé ;
-- gérer leurs propres publications.
+- Demander des critiques de livres ou d'articles ;
+- Publier des critiques ;
+- Répondre à des demandes de critique ;
+- Suivre d'autres utilisateurs ;
+- Consulter un flux personnalisé ;
+- Gérer leurs propres publications.
 
-L'application utilise l'architecture Django classique :
+L'application suit l'architecture Django classique :
 
-- les **modèles** portent les données et la logique métier ;
-- les **vues** coordonnent les requêtes et les réponses ;
-- les **templates** affichent les pages HTML.
+- Les **Modèles** portent les données et la logique métier ;
+- les **Vues** coordonnent les requêtes et les réponses ;
+- les **Templates** affichent les pages HTML.
+
+J'ai choisi de garder une architecture assez simple, avec une seule application principale `litreview`, afin que le projet reste lisible et facile à expliquer.
 
 ---
 
@@ -48,24 +52,34 @@ L'application utilise l'architecture Django classique :
 
 Un visiteur peut :
 
-- créer un compte ;
-- se connecter ;
-- se déconnecter.
+- Créer un compte ;
+- Se connecter.
+
+Un utilisateur connecté peut :
+
+- Accéder aux pages protégées ;
+- Se déconnecter.
 
 Un utilisateur non connecté ne peut accéder qu'aux pages de connexion et d'inscription.
 
 ---
 
-### Publications
+### Flux de publications
 
-Une fois connecté, l'utilisateur accède à une page d'accueil contenant les publications visibles.
+Une fois connecté, l'utilisateur arrive sur sa page d'accueil.
 
-La page d'accueil affiche :
+Le flux affiche :
 
-- les tickets visibles ;
-- les critiques visibles ;
-- les tickets et critiques mélangés dans un même flux ;
-- les publications triées de la plus récente à la plus ancienne.
+- Les tickets visibles ;
+- Les critiques visibles ;
+- Les tickets et critiques mélangés dans une seule liste ;
+- Les publications triées de la plus récente à la plus ancienne.
+
+Le flux prend en compte :
+
+- Les publications de l'utilisateur connecté ;
+- Les publications des utilisateurs suivis ;
+- Les critiques publiées en réponse aux tickets de l'utilisateur connecté.
 
 ---
 
@@ -75,12 +89,13 @@ Un ticket correspond à une demande de critique.
 
 L'utilisateur connecté peut :
 
-- créer un ticket ;
-- ajouter un titre ;
-- ajouter une description ;
-- ajouter une image optionnelle ;
-- modifier ses propres tickets ;
-- supprimer ses propres tickets après confirmation.
+- Créer un ticket ;
+- Ajouter un titre ;
+- Ajouter une description ;
+- Ajouter une image optionnelle ;
+- Modifier ses propres tickets ;
+- Remplacer l'image d'un ticket ;
+- Supprimer ses propres tickets après confirmation.
 
 ---
 
@@ -90,14 +105,27 @@ Une critique est associée à un ticket.
 
 L'utilisateur connecté peut :
 
-- créer une critique en réponse à un ticket ;
-- attribuer une note ;
-- ajouter un titre ;
-- ajouter un commentaire ;
-- modifier ses propres critiques ;
-- supprimer ses propres critiques après confirmation.
+- Créer une critique en réponse à un ticket ;
+- Attribuer une note de 0 à 5 ;
+- Ajouter un titre ;
+- Ajouter un commentaire ;
+- Modifier ses propres critiques ;
+- Supprimer ses propres critiques après confirmation.
 
 Un utilisateur ne peut pas créer deux critiques pour le même ticket.
+
+---
+
+### Créer un ticket avec sa critique
+
+L'application permet aussi de créer un ticket et une critique en une seule étape.
+
+Cette fonctionnalité sert à publier une critique à partir de zéro :
+
+- Création du ticket décrivant le livre ou l'article ;
+- Création de la critique associée ;
+- Attribution d'une note ;
+- Association automatique des deux contenus à l'utilisateur connecté.
 
 ---
 
@@ -105,15 +133,15 @@ Un utilisateur ne peut pas créer deux critiques pour le même ticket.
 
 L'utilisateur connecté peut :
 
-- suivre un autre utilisateur en saisissant son nom d'utilisateur ;
-- consulter la liste des utilisateurs suivis ;
-- se désabonner d'un utilisateur.
+- Suivre un autre utilisateur en saisissant son nom d'utilisateur ;
+- Consulter la liste des utilisateurs suivis ;
+- Se désabonner après une page de confirmation.
 
 Le formulaire d'abonnement gère les cas suivants :
 
-- utilisateur inexistant ;
-- tentative de se suivre soi-même ;
-- tentative de suivre deux fois le même utilisateur.
+- Utilisateur inexistant ;
+- Tentative de se suivre soi-même ;
+- Tentative de suivre deux fois le même utilisateur.
 
 ---
 
@@ -121,8 +149,8 @@ Le formulaire d'abonnement gère les cas suivants :
 
 La page **Mes posts** permet à l'utilisateur connecté de consulter ses propres contenus :
 
-- ses tickets ;
-- ses critiques.
+- Ses propres tickets ;
+- Ses propres critiques.
 
 Les contenus sont affichés du plus récent au plus ancien.
 
@@ -130,21 +158,45 @@ Depuis cette page, l'utilisateur peut modifier ou supprimer ses propres publicat
 
 ---
 
-### Création d'une critique à partir de zéro
+### Interface
 
-L'application doit permettre de créer une critique sans répondre à un ticket existant.
+L'interface utilise Bootstrap et Crispy Forms.
 
-Cette fonctionnalité consiste à créer en une seule étape :
+J'ai ajouté un style personnalisé directement dans le template de base, avec un thème sombre et des touches dorées.  
+L'objectif était de garder une interface simple, mais plus cohérente avec l'univers d'un site de critiques littéraires.
 
-- un ticket décrivant le livre ou l'article ;
-- une critique associée à ce ticket ;
-- une note.
+---
+
+## Comptes de test
+
+La base de données fournie contient des données de démonstration.
+
+Compte administrateur :
+
+```text
+Nom d'utilisateur : Lecteur0
+Mot de passe : abcd0123!
+Rôle : administrateur
+```
+
+Ce compte permet d'accéder à l'administration Django :
+
+```text
+http://127.0.0.1:8000/admin/
+```
+
+Les autres comptes lecteurs présents dans la base peuvent être utilisés pour tester :
+
+- Le flux ;
+- Les abonnements ;
+- Les demandes de critique ;
+- Les critiques entre utilisateurs.
 
 ---
 
 ## Technologies utilisées
 
-- Python
+- Python 3.11
 - Django
 - SQLite
 - HTML
@@ -218,7 +270,7 @@ Le site est ensuite accessible à l'adresse suivante :
 http://127.0.0.1:8000/
 ```
 
-La racine du site redirige vers la page d'accueil.
+La racine du site redirige automatiquemnt vers la page d'accueil.
 
 ---
 
@@ -234,19 +286,33 @@ Depuis la page de connexion, saisir ses identifiants.
 
 ### Créer une demande de critique
 
-Depuis l'accueil, cliquer sur le bouton de création de ticket, puis remplir le formulaire.
+Depuis l'accueil, cliquer sur **Demander une critique**, puis remplir le formulaire du ticket.
 
-### Créer une critique
+### Créer une critique en réponse à un ticket
 
-Depuis une publication de type ticket, cliquer sur le bouton permettant de créer une critique.
+Depuis un ticket visible dans le flux, cliquer sur **Créer une critique**, puis remplir le formulaire.
+
+### Créer un ticket avec sa critique
+
+Depuis l'accueil, cliquer sur **Créer un ticket avec sa critique**.
+
+Cette page contient deux parties :
+
+- Le ticket, pour présenter le livre ou l'article ;
+- La critique, pour donner son avis et sa note.
 
 ### Gérer ses publications
 
 Depuis la page **Mes posts**, l'utilisateur peut consulter, modifier ou supprimer ses propres tickets et critiques.
 
+Les suppressions passent par une page de confirmation.
+
 ### Gérer ses abonnements
 
-Depuis la page **Abonnements**, l'utilisateur peut suivre un autre utilisateur ou se désabonner.
+Depuis la page **Abonnements**, l'utilisateur peut suivre un autre utilisateur en saisissant son nom d'utilisateur.
+
+Il peut aussi se désabonner d'un utilisateur suivi.  
+Le désabonnement passe également par une page de confirmation.
 
 ---
 
@@ -265,6 +331,9 @@ Projet_9/
 │   ├── templates/
 │   │   └── pages/
 │   │       ├── temp_partiels/
+│   │       │   ├── review.html
+│   │       │   ├── ticket.html
+│   │       │   └── ticket_reponse.html
 │   │       ├── accueil.html
 │   │       ├── abonnements.html
 │   │       ├── base.html
@@ -272,13 +341,16 @@ Projet_9/
 │   │       ├── inscription.html
 │   │       ├── creer_ticket.html
 │   │       ├── creer_critique.html
+│   │       ├── creer_critique_avec_ticket.html
 │   │       ├── modifier_ticket.html
 │   │       ├── modifier_critique.html
 │   │       ├── mes_posts.html
+│   │       ├── confirmer_desabonnement.html
 │   │       ├── confirmer_suppression_ticket.html
 │   │       └── confirmer_suppression_critique.html
 │   │
 │   ├── admin.py
+│   ├── apps.py
 │   ├── forms.py
 │   ├── models.py
 │   ├── urls.py
@@ -297,25 +369,27 @@ Projet_9/
 
 Le projet utilise SQLite comme base de données locale.
 
-Le fichier suivant doit être inclus dans le repository :
+Le fichier suivant est inclus dans le repository :
 
 ```text
 db.sqlite3
 ```
 
-Les images envoyées par les utilisateurs sont stockées dans :
+Il contient des données de démonstration pour tester l'application.
+
+Les images de démonstration sont stockées dans :
 
 ```text
 media/
 ```
 
-Le dossier `media/` ne doit pas être suivi par Git, car il contient des fichiers envoyés localement pendant l'utilisation du site.
+Le dossier `media/` est inclus dans le repository afin que les couvertures de livres affichées dans les tickets soient visibles lors d'une installation locale.
 
 ---
 
 ## Qualité du code
 
-Avant chaque commit important, les commandes suivantes ont été utilisées :
+Les commandes suivantes ont été utilisées :
 
 ```bash
 black .
@@ -325,12 +399,12 @@ python manage.py check
 
 Le projet suit les principes suivants :
 
-- code lisible ;
-- noms explicites ;
-- logique métier placée dans les modèles ;
-- vues simples ;
-- templates organisés ;
-- commits précis et séparés.
+- Code lisible ;
+- Noms explicites ;
+- Logique métier placée principalement dans les modèles ;
+- Vues simplifiées le plus possible ;
+- Templates organisés avec des partiels réutilisables ;
+- Commits précis et séparés.
 
 ---
 
@@ -346,6 +420,12 @@ python manage.py runserver
 
 ```bash
 python manage.py check
+```
+
+### Vérifier qu'aucune migration n'est oubliée
+
+```bash
+python manage.py makemigrations --check --dry-run
 ```
 
 ### Formater le code
@@ -376,16 +456,27 @@ Le projet utilise un modèle utilisateur personnalisé :
 AUTH_USER_MODEL = "litreview.User"
 ```
 
+Les modèles principaux sont :
+
+- `User` ;
+- `Ticket` ;
+- `Review` ;
+- `UserFollows`.
+
 La logique métier principale est portée par les modèles Django, notamment pour :
 
-- le flux de publications ;
-- les abonnements ;
-- la création de tickets ;
-- la création de critiques ;
-- la modification des contenus ;
-- la suppression des contenus.
+- Le flux de publications ;
+- Les abonnements ;
+- La création de tickets ;
+- La création de critiques ;
+- La création d'un ticket avec sa critique ;
+- La modification des contenus ;
+- La suppression des contenus ;
+- Les protections liées à l'utilisateur connecté.
 
-Les vues restent volontairement simples : elles reçoivent la requête, appellent les méthodes des modèles, puis renvoient une réponse ou une redirection.
+Les vues restent volontairement simples : elles reçoivent la requête, instancient les formulaires, appellent les méthodes des modèles, puis renvoient une réponse ou une redirection.
+
+Les templates sont découpés avec des partiels pour éviter de répéter le code d'affichage des tickets et des critiques.
 
 ---
 
