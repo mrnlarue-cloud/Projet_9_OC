@@ -10,5 +10,5 @@ __pycache__/
 .pytest_cache/
 .cache/
 
-# Fichiers médias uploadés par les utilisateurs
-media/
+# Fichiers médias uploadés par les utilisateurs - choix de le mettre pour soutenance
+# media/
