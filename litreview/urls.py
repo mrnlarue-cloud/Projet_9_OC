@@ -29,6 +29,11 @@ urlpatterns = [
     path("abonnements/", views.abonnements, name="abonnements"),
     path(
         "desabonnement/<int:utilisateur_suivi_id>/",
+        views.confirmer_desabonnement,
+        name="confirmer_desabonnement",
+    ),
+    path(
+        "desabonnement/<int:utilisateur_suivi_id>/confirmer/",
         views.desabonnement,
         name="desabonnement",
     ),
@@ -54,6 +59,11 @@ urlpatterns = [
     # ----------------------------
     # Critiques
     # ----------------------------
+    path(
+        "creer-critique/",
+        views.creer_critique_avec_ticket,
+        name="creer_critique_avec_ticket",
+    ),
     path(
         "creer-critique/<int:ticket_id>/",
         views.creer_critique,

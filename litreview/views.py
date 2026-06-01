@@ -10,7 +10,7 @@ from litreview.forms import (
     ReviewForm,
     TicketForm,
 )
-from litreview.models import Review, Ticket, UserFollows
+from litreview.models import Review, Ticket, User, UserFollows
 
 # ----------------------------
 # Authentification
@@ -19,16 +19,13 @@ from litreview.models import Review, Ticket, UserFollows
 
 def inscription(request):
     """Inscrit un nouvel utilisateur."""
-    if request.method == "POST":
-        formulaire_inscription = InscriptionForm(request.POST)
+    formulaire_inscription = InscriptionForm(request.POST or None)
 
-        if formulaire_inscription.is_valid():
-            utilisateur = formulaire_inscription.save()
-            login(request, utilisateur)
-            return redirect("accueil")
+    utilisateur = User.creer_depuis_formulaire(formulaire_inscription)
 
-    else:
-        formulaire_inscription = InscriptionForm()
+    if utilisateur:
+        login(request, utilisateur)
+        return redirect("accueil")
 
     return render(
         request,
@@ -39,16 +36,15 @@ def inscription(request):
 
 def connexion(request):
     """Connecte l'utilisateur si les identifiants sont valides."""
-    if request.method == "POST":
-        formulaire_connexion = AuthenticationForm(request, data=request.POST)
+    formulaire_connexion = AuthenticationForm(
+        request,
+        data=request.POST or None,
+    )
 
-        if formulaire_connexion.is_valid():
-            utilisateur = formulaire_connexion.get_user()
-            login(request, utilisateur)
-            return redirect("accueil")
-
-    else:
-        formulaire_connexion = AuthenticationForm()
+    if formulaire_connexion.is_valid():
+        utilisateur = formulaire_connexion.get_user()
+        login(request, utilisateur)
+        return redirect("accueil")
 
     return render(
         request,
@@ -71,18 +67,11 @@ def deconnexion(request):
 
 @login_required
 def accueil(request):
-    """Affichage des contenus visibles par l'utilisateur."""
-    contenus_flux = request.user.contenus_flux_visible()
-
+    """Affiche les contenus visibles par l'utilisateur."""
     return render(
         request,
         "pages/accueil.html",
-        {
-            "tickets_utilisateur": contenus_flux["tickets"],
-            "critiques_utilisateur": contenus_flux["critiques"],
-            "publications": contenus_flux["publications"],
-            "tickets_deja_critiques": contenus_flux["tickets_deja_critiques"],
-        },
+        request.user.contexte_accueil(),
     )
 
 
@@ -92,7 +81,7 @@ def mes_posts(request):
     return render(
         request,
         "pages/mes_posts.html",
-        {"publications": request.user.publications_utilisateur()},
+        request.user.contexte_mes_posts(),
     )
 
 
@@ -106,29 +95,42 @@ def abonnements(request):
     """Affiche les utilisateurs suivis et permet d'en suivre un nouveau."""
     formulaire_abonnement = AbonnementForm(request.POST or None)
 
-    if request.method == "POST":
-        abonnement_ajoute = UserFollows.traiter_formulaire_abonnement(
-            utilisateur=request.user,
-            formulaire_abonnement=formulaire_abonnement,
-        )
+    abonnement_ajoute = UserFollows.traiter_formulaire_abonnement(
+        utilisateur=request.user,
+        formulaire_abonnement=formulaire_abonnement,
+    )
 
-        if abonnement_ajoute:
-            return redirect("abonnements")
+    if abonnement_ajoute:
+        return redirect("abonnements")
 
     return render(
         request,
         "pages/abonnements.html",
-        {
-            "utilisateurs_suivis": request.user.utilisateurs_suivis(),
-            "formulaire_abonnement": formulaire_abonnement,
-        },
+        request.user.contexte_abonnements(formulaire_abonnement),
+    )
+
+
+@login_required
+def confirmer_desabonnement(request, utilisateur_suivi_id):
+    """Affiche la confirmation de désabonnement."""
+    abonnement = get_object_or_404(
+        UserFollows.abonnement_supprimable(
+            utilisateur=request.user,
+            utilisateur_suivi_id=utilisateur_suivi_id,
+        )
+    )
+
+    return render(
+        request,
+        "pages/confirmer_desabonnement.html",
+        {"abonnement": abonnement},
     )
 
 
 @login_required
 @require_POST
 def desabonnement(request, utilisateur_suivi_id):
-    """Désabonnement."""
+    """Désabonne l'utilisateur connecté d'un autre utilisateur."""
     UserFollows.supprimer_abonnement(
         utilisateur=request.user,
         utilisateur_suivi_id=utilisateur_suivi_id,
@@ -144,24 +146,19 @@ def desabonnement(request, utilisateur_suivi_id):
 
 @login_required
 def creer_ticket(request):
-    """Crée une demande d'avis utilisateur."""
-    if request.method == "POST":
-        formulaire_ticket = TicketForm(request.POST, request.FILES)
+    """Crée une demande de critique."""
+    formulaire_ticket = TicketForm(
+        request.POST or None,
+        request.FILES or None,
+    )
 
-        if formulaire_ticket.is_valid():
-            donnees = formulaire_ticket.cleaned_data
+    ticket = Ticket.creer_depuis_formulaire(
+        utilisateur=request.user,
+        formulaire_ticket=formulaire_ticket,
+    )
 
-            Ticket.creer_ticket_suite_demande(
-                utilisateur=request.user,
-                titre=donnees["title"],
-                description=donnees["description"],
-                image=donnees["image"],
-            )
-
-            return redirect("accueil")
-
-    else:
-        formulaire_ticket = TicketForm()
+    if ticket:
+        return redirect("accueil")
 
     return render(
         request,
@@ -198,18 +195,12 @@ def modifier_ticket(request, ticket_id):
 
 @login_required
 def confirmer_suppression_ticket(request, ticket_id):
-    """Affiche la page de confirmation de suppression d'un ticket."""
+    """Affiche la confirmation de suppression d'un ticket."""
     ticket = get_object_or_404(
         Ticket.ticket_supprimable(
             utilisateur=request.user,
             ticket_id=ticket_id,
         )
-    )
-
-    return render(
-        request,
-        "pages/confirmer_suppression_ticket.html",
-        {"ticket": ticket},
     )
 
     return render(
@@ -222,12 +213,14 @@ def confirmer_suppression_ticket(request, ticket_id):
 @login_required
 @require_POST
 def supprimer_ticket(request, ticket_id):
+    """Supprime un ticket créé par l'utilisateur."""
     ticket = get_object_or_404(
         Ticket.ticket_supprimable(
             utilisateur=request.user,
             ticket_id=ticket_id,
         )
     )
+
     ticket.supprimer()
 
     return redirect("mes_posts")
@@ -239,36 +232,59 @@ def supprimer_ticket(request, ticket_id):
 
 
 @login_required
+def creer_critique_avec_ticket(request):
+    """Crée un ticket et une critique associée en une seule étape."""
+    formulaire_ticket = TicketForm(
+        request.POST or None,
+        request.FILES or None,
+    )
+    formulaire_critique = ReviewForm(request.POST or None)
+
+    creation = Review.creer_avec_ticket_depuis_formulaires(
+        utilisateur=request.user,
+        formulaire_ticket=formulaire_ticket,
+        formulaire_critique=formulaire_critique,
+    )
+
+    if creation:
+        return redirect("accueil")
+
+    return render(
+        request,
+        "pages/creer_critique_avec_ticket.html",
+        {
+            "formulaire_ticket": formulaire_ticket,
+            "formulaire_critique": formulaire_critique,
+        },
+    )
+
+
+@login_required
 def creer_critique(request, ticket_id):
     """Crée une critique en réponse à un ticket."""
     ticket = get_object_or_404(Ticket.ticket_par_id(ticket_id))
 
-    if Review.critique_deja_creee(request.user, ticket):
+    formulaire_critique = ReviewForm(request.POST or None)
+
+    critique = Review.creer_depuis_formulaire(
+        utilisateur=request.user,
+        ticket=ticket,
+        formulaire_critique=formulaire_critique,
+    )
+
+    if critique:
         return redirect("accueil")
 
-    if request.method == "POST":
-        formulaire_critique = ReviewForm(request.POST)
-
-        if formulaire_critique.is_valid():
-            donnees = formulaire_critique.cleaned_data
-
-            Review.creer_critique_en_reponse(
-                utilisateur=request.user,
-                ticket=ticket,
-                titre=donnees["headline"],
-                commentaire=donnees["body"],
-                note=donnees["rating"],
-            )
-
-            return redirect("accueil")
-
-    else:
-        formulaire_critique = ReviewForm()
+    if Review.critique_deja_creee(request.user, ticket):
+        return redirect("accueil")
 
     return render(
         request,
         "pages/creer_critique.html",
-        {"formulaire_critique": formulaire_critique, "ticket": ticket},
+        {
+            "formulaire_critique": formulaire_critique,
+            "ticket": ticket,
+        },
     )
 
 

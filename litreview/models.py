@@ -10,7 +10,7 @@ Ce fichier contient les modèles reliés à la base de données :
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db import models
+from django.db import models, transaction
 
 # ----------------------------
 # Utilisateur personnalisé
@@ -20,9 +20,22 @@ from django.db import models
 class User(AbstractUser):
     """Utilisateur personnalisé de l'application LITRevu."""
 
+    @classmethod
+    def creer_depuis_formulaire(classe_user, formulaire_inscription):
+        """Crée un utilisateur si le formulaire d'inscription est valide."""
+        if not formulaire_inscription.is_bound:
+            return None
+
+        if not formulaire_inscription.is_valid():
+            return None
+
+        return formulaire_inscription.save()
+
     def utilisateurs_visibles(self):
         """Retourne l'utilisateur et les utilisateurs suivis."""
-        abonnements = UserFollows.objects.filter(user=self)
+        abonnements = UserFollows.objects.filter(user=self).select_related(
+            "followed_user"
+        )
 
         utilisateurs_visibles = {self}
 
@@ -32,43 +45,42 @@ class User(AbstractUser):
         return utilisateurs_visibles
 
     def utilisateurs_suivis(self):
-        """Retourne les utilisateurs suivis par l'utilsateur"""
-        abonnements = UserFollows.objects.filter(user=self).select_related(
-            "followed_user"
-        )
-
-        utilisateurs = []
-
-        for abonnement in abonnements:
-            utilisateurs.append(abonnement.followed_user)
-
-        return utilisateurs
+        """Retourne les utilisateurs suivis par l'utilisateur."""
+        return User.objects.filter(followed_by__user=self).order_by("username")
 
     def tickets_deja_critiques(self):
-        """Retourne les IDs des tickets déjà critiqués."""
-        critiques_utilisateur = Review.objects.filter(user=self)
-
-        ids_tickets = set()
-
-        for critique in critiques_utilisateur:
-            ids_tickets.add(critique.ticket.id)
-
-        return ids_tickets
-
-    def contenus_flux_visible(self):
-        """Retourne les contenus visibles dans le flux."""
-        tickets_visibles = Ticket.tickets_visibles_utilisateur(self)
-        critiques_visibles = Review.critiques_visibles_utilisateur(self)
-        publications = self.publications_flux(
-            tickets_visibles=tickets_visibles,
-            critiques_visibles=critiques_visibles,
+        """Retourne les IDs des tickets déjà critiqués par l'utilisateur."""
+        return set(
+            Review.objects.filter(user=self).values_list(
+                "ticket_id",
+                flat=True,
+            )
         )
 
+    def contexte_accueil(self):
+        """Retourne les données nécessaires à la page d'accueil."""
+        tickets_visibles = Ticket.tickets_visibles_utilisateur(self)
+        critiques_visibles = Review.critiques_visibles_utilisateur(self)
+
         return {
-            "tickets": tickets_visibles,
-            "critiques": critiques_visibles,
-            "publications": publications,
+            "publications": self.publications_flux(
+                tickets_visibles=tickets_visibles,
+                critiques_visibles=critiques_visibles,
+            ),
             "tickets_deja_critiques": self.tickets_deja_critiques(),
+        }
+
+    def contexte_mes_posts(self):
+        """Retourne les données nécessaires à la page Mes posts."""
+        return {
+            "publications": self.publications_utilisateur(),
+        }
+
+    def contexte_abonnements(self, formulaire_abonnement):
+        """Retourne les données nécessaires à la page d'abonnements."""
+        return {
+            "utilisateurs_suivis": self.utilisateurs_suivis(),
+            "formulaire_abonnement": formulaire_abonnement,
         }
 
     def publications_utilisateur(self):
@@ -146,6 +158,24 @@ class Ticket(models.Model):
         )
 
     @classmethod
+    def creer_depuis_formulaire(classe_ticket, utilisateur, formulaire_ticket):
+        """Crée un ticket si le formulaire est valide."""
+        if not formulaire_ticket.is_bound:
+            return None
+
+        if not formulaire_ticket.is_valid():
+            return None
+
+        donnees = formulaire_ticket.cleaned_data
+
+        return classe_ticket.creer_ticket_suite_demande(
+            utilisateur=utilisateur,
+            titre=donnees["title"],
+            description=donnees["description"],
+            image=donnees.get("image"),
+        )
+
+    @classmethod
     def tickets_utilisateur(classe_ticket, utilisateur):
         """Retourne les tickets d'un utilisateur du plus récent au plus ancien."""
         return classe_ticket.objects.filter(user=utilisateur).order_by("-time_created")
@@ -174,6 +204,7 @@ class Ticket(models.Model):
 
     @classmethod
     def ticket_supprimable(classe_ticket, utilisateur, ticket_id):
+        """Retourne le ticket supprimable par l'utilisateur."""
         return classe_ticket.objects.filter(
             id=ticket_id,
             user=utilisateur,
@@ -191,6 +222,7 @@ class Ticket(models.Model):
         return True
 
     def supprimer(self):
+        """Supprime le ticket."""
         self.delete()
 
     def __str__(self):
@@ -247,8 +279,92 @@ class Review(models.Model):
         )
 
     @classmethod
+    def creer_depuis_formulaire(
+        classe_review,
+        utilisateur,
+        ticket,
+        formulaire_critique,
+    ):
+        """Crée une critique en réponse si le formulaire est valide."""
+        if not formulaire_critique.is_bound:
+            return None
+
+        if not formulaire_critique.is_valid():
+            return None
+
+        if classe_review.critique_deja_creee(utilisateur, ticket):
+            formulaire_critique.add_error(
+                None,
+                "Vous avez déjà publié une critique pour ce ticket.",
+            )
+            return None
+
+        donnees = formulaire_critique.cleaned_data
+
+        return classe_review.creer_critique_en_reponse(
+            utilisateur=utilisateur,
+            ticket=ticket,
+            titre=donnees["headline"],
+            commentaire=donnees["body"],
+            note=donnees["rating"],
+        )
+
+    @classmethod
+    def creer_critique_avec_ticket(
+        classe_review,
+        utilisateur,
+        donnees_ticket,
+        donnees_critique,
+    ):
+        """Crée un ticket et une critique associée en une seule action."""
+        with transaction.atomic():
+            ticket = Ticket.creer_ticket_suite_demande(
+                utilisateur=utilisateur,
+                titre=donnees_ticket["title"],
+                description=donnees_ticket["description"],
+                image=donnees_ticket.get("image"),
+            )
+
+            critique = classe_review.creer_critique_en_reponse(
+                utilisateur=utilisateur,
+                ticket=ticket,
+                titre=donnees_critique["headline"],
+                commentaire=donnees_critique["body"],
+                note=donnees_critique["rating"],
+            )
+
+        return ticket, critique
+
+    @classmethod
+    def creer_avec_ticket_depuis_formulaires(
+        classe_review,
+        utilisateur,
+        formulaire_ticket,
+        formulaire_critique,
+    ):
+        """Crée un ticket et une critique si les deux formulaires sont valides."""
+        if not formulaire_ticket.is_bound or not formulaire_critique.is_bound:
+            return None
+
+        formulaires_valides = all(
+            [
+                formulaire_ticket.is_valid(),
+                formulaire_critique.is_valid(),
+            ]
+        )
+
+        if not formulaires_valides:
+            return None
+
+        return classe_review.creer_critique_avec_ticket(
+            utilisateur=utilisateur,
+            donnees_ticket=formulaire_ticket.cleaned_data,
+            donnees_critique=formulaire_critique.cleaned_data,
+        )
+
+    @classmethod
     def critique_deja_creee(classe_review, utilisateur, ticket):
-        """Check si une critique a déjà été faite par l'utilisateur."""
+        """Vérifie si une critique existe déjà pour ce ticket et cet utilisateur."""
         return classe_review.objects.filter(
             user=utilisateur,
             ticket=ticket,
@@ -269,21 +385,6 @@ class Review(models.Model):
             id=critique_id,
             user=utilisateur,
         )
-
-    def supprimer(self):
-        """Supprime la critique."""
-        self.delete()
-
-    def modifier_avec_formulaire(self, formulaire_critique):
-        """Modifie la critique si le formulaire est valide."""
-        if not formulaire_critique.is_bound:
-            return False
-
-        if not formulaire_critique.is_valid():
-            return False
-
-        formulaire_critique.save()
-        return True
 
     @classmethod
     def critiques_utilisateur(classe_review, utilisateur):
@@ -316,6 +417,21 @@ class Review(models.Model):
         return classe_review.objects.filter(id__in=ids_critiques_visibles).order_by(
             "-time_created"
         )
+
+    def modifier_avec_formulaire(self, formulaire_critique):
+        """Modifie la critique si le formulaire est valide."""
+        if not formulaire_critique.is_bound:
+            return False
+
+        if not formulaire_critique.is_valid():
+            return False
+
+        formulaire_critique.save()
+        return True
+
+    def supprimer(self):
+        """Supprime la critique."""
+        self.delete()
 
     def __str__(self):
         """Retourne le titre de la critique."""
@@ -379,6 +495,9 @@ class UserFollows(models.Model):
         formulaire_abonnement,
     ):
         """Traite le formulaire d'abonnement."""
+        if not formulaire_abonnement.is_bound:
+            return False
+
         if not formulaire_abonnement.is_valid():
             return False
 
@@ -396,15 +515,26 @@ class UserFollows(models.Model):
         return True
 
     @classmethod
+    def abonnement_supprimable(
+        classe_abonnement,
+        utilisateur,
+        utilisateur_suivi_id,
+    ):
+        return classe_abonnement.objects.filter(
+            user=utilisateur,
+            followed_user_id=utilisateur_suivi_id,
+        ).select_related("followed_user")
+
+    @classmethod
     def supprimer_abonnement(
         classe_abonnement,
         utilisateur,
         utilisateur_suivi_id,
     ):
-        """Supprime un follow."""
-        abonnement = classe_abonnement.objects.filter(
-            user=utilisateur,
-            followed_user_id=utilisateur_suivi_id,
+        """Supprime un abonnement appartenant à l'utilisateur."""
+        abonnement = classe_abonnement.abonnement_supprimable(
+            utilisateur=utilisateur,
+            utilisateur_suivi_id=utilisateur_suivi_id,
         ).first()
 
         if abonnement:

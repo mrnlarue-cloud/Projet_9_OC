@@ -1,0 +1,36 @@
+{% extends "pages/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h1>Créer un ticket avec sa critique</h1>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <section class="mb-4">
+            <h2>Livre ou Article</h2>
+
+            {{ formulaire_ticket|crispy }}
+        </section>
+
+        <section class="mb-4">
+            <h2>Critique</h2>
+
+            {{ formulaire_critique|crispy }}
+        </section>
+
+        <button type="submit" class="btn btn-primary">
+            Publier
+        </button>
+
+        <p class="mt-2">
+            Les champs marqués d'une
+            <span class="text-danger">*</span>
+            sont obligatoires.
+        </p>
+    </form>
+
+    <p class="mt-3">
+        <a href="{% url 'accueil' %}">Retour à l'accueil</a>
+    </p>
+{% endblock content %}
