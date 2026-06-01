@@ -177,14 +177,18 @@ def modifier_ticket(request, ticket_id):
         )
     )
 
-    formulaire_ticket = TicketForm(
-        request.POST or None,
-        request.FILES or None,
-        instance=ticket,
-    )
+    if request.method == "POST":
+        formulaire_ticket = TicketForm(
+            request.POST,
+            request.FILES,
+            instance=ticket,
+        )
 
-    if ticket.modifier_avec_formulaire(formulaire_ticket):
-        return redirect("mes_posts")
+        if ticket.modifier_avec_formulaire(formulaire_ticket):
+            return redirect("mes_posts")
+
+    else:
+        formulaire_ticket = TicketForm(instance=ticket)
 
     return render(
         request,

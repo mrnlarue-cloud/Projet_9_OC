@@ -1,17 +1,22 @@
 {% extends "pages/base.html" %}
 
 {% block content %}
-    <h1>LITRevu</h1>
+    <div class="welcome-box">
+        <h1>LITRevu</h1>
 
-    <p>Bienvenue {{ user.username }}.</p>
+        <p>
+            Bienvenue,
+            <span class="username-highlight">{{ user.username }}</span> !
+        </p>
+    </div>
 
-    <p>
+    <p class="text-center">
         <a href="{% url 'creer_ticket' %}" class="btn btn-primary">
             Demander une critique
         </a>
 
         <a href="{% url 'creer_critique_avec_ticket' %}" class="btn btn-primary">
-            Créer une critique
+            Créer un ticket avec sa critique
         </a>
     </p>
 

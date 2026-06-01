@@ -1,26 +1,51 @@
 <div class="card mb-4">
     <div class="card-body">
-        <p class="text-muted">
-            {% if ticket.user == user %}
-                Vous avez demandé une critique
-            {% else %}
-                {{ ticket.user.username }} a demandé une critique
-            {% endif %}
-            le {{ ticket.time_created|date:"d/m/y à H:i" }}
-        </p>
-
-        <h3 class="card-title">{{ ticket.title }}</h3>
-
-        {% if ticket.description %}
-            <p class="card-text">{{ ticket.description }}</p>
-        {% endif %}
-
         {% if ticket.image %}
-            <img
-                src="{{ ticket.image.url }}"
-                alt="Image associée au ticket {{ ticket.title }}"
-                class="img-fluid rounded mt-2"
-            >
+            <div class="row align-items-center ticket-layout">
+                <div class="col-md-8 ticket-text">
+                    <p class="text-muted">
+                        {% if ticket.user == user %}
+                            Publié par <span class="username-highlight">vous</span>
+                        {% else %}
+                            Publié par
+                            <span class="username-highlight">{{ ticket.user.username }}</span>
+                        {% endif %}
+                        le {{ ticket.time_created|date:"d/m/y à H:i" }}
+                    </p>
+
+                    <h3 class="card-title">{{ ticket.title }}</h3>
+
+                    {% if ticket.description %}
+                        <p class="card-text">{{ ticket.description }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-4 d-flex justify-content-end align-items-center ticket-cover">
+                    <img
+                        src="{{ ticket.image.url }}"
+                        alt="Image associée au ticket {{ ticket.title }}"
+                        class="img-fluid"
+                    >
+                </div>
+            </div>
+        {% else %}
+            <div class="ticket-layout ticket-text">
+                <p class="text-muted">
+                    {% if ticket.user == user %}
+                        Publié par <span class="username-highlight">vous</span>
+                    {% else %}
+                        Publié par
+                        <span class="username-highlight">{{ ticket.user.username }}</span>
+                    {% endif %}
+                    le {{ ticket.time_created|date:"d/m/y à H:i" }}
+                </p>
+
+                <h3 class="card-title">{{ ticket.title }}</h3>
+
+                {% if ticket.description %}
+                    <p class="card-text">{{ ticket.description }}</p>
+                {% endif %}
+            </div>
         {% endif %}
     </div>
 </div>

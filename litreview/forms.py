@@ -23,7 +23,7 @@ class InscriptionForm(UserCreationForm):
 
 
 class TicketForm(forms.ModelForm):
-    """Formulaire de création d'un ticket."""
+    """Formulaire de création et modification d'un ticket."""
 
     class Meta:
         model = Ticket
@@ -32,6 +32,9 @@ class TicketForm(forms.ModelForm):
             "title": "Titre",
             "description": "Description",
             "image": "Image",
+        }
+        widgets = {
+            "image": forms.FileInput(),
         }
 
 
