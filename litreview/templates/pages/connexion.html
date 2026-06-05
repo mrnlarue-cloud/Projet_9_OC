@@ -1,19 +1,26 @@
 {% extends "pages/base.html" %}
+{% load crispy_forms_tags %}
 
 {% block content %}
     <h1>LITRevu</h1>
 
     <h2>Connexion</h2>
 
-    <form method="post">
+    <form method="post" class="mb-4">
         {% csrf_token %}
-        {{ formulaire_connexion.as_p }}
 
-        <button type="submit">Se connecter</button>
+        {{ formulaire_connexion|crispy }}
+
+        <button type="submit" class="btn btn-primary">
+            Se connecter
+        </button>
     </form>
 
-    <p>
-        Vous n'avez pas encore de compte ?
-        <a href="{% url 'inscription' %}">S'inscrire</a>
-    </p>
+    <div class="text-center">
+        <p class="mb-2">Vous n'avez pas encore de compte ?</p>
+
+        <a href="{% url 'inscription' %}" class="btn btn-primary">
+            S'inscrire
+        </a>
+    </div>
 {% endblock content %}
