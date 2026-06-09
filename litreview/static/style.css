@@ -1,0 +1,172 @@
+:root {
+    --fond-principal: #17233d;
+    --fond-contenu: #111a2e;
+    --fond-carte: #1f2d49;
+    --texte-clair: #f7f3ea;
+    --texte-secondaire: #c9c2b8;
+    --couleur-bouton: #d6b36a;
+    --couleur-bouton-survol: #e8c87d;
+    --bordure: rgba(214, 179, 106, 0.55);
+}
+
+body {
+    background-color: var(--fond-principal);
+    color: var(--texte-clair);
+}
+
+.page-content {
+    background-color: var(--fond-contenu);
+    border: 2px solid var(--bordure);
+    border-radius: 20px;
+    padding: 2rem;
+}
+
+.site-nav {
+    background-color: var(--fond-contenu);
+    border: 2px solid var(--bordure);
+    border-radius: 20px;
+    padding: 1rem;
+}
+
+.site-nav a {
+    color: var(--texte-clair);
+    font-weight: 600;
+}
+
+.site-nav a:hover {
+    color: var(--couleur-bouton);
+}
+
+h1,
+h2,
+h3,
+p,
+label,
+li {
+    color: var(--texte-clair);
+}
+
+.text-muted {
+    color: var(--texte-secondaire) !important;
+}
+
+a {
+    color: var(--couleur-bouton);
+}
+
+a:hover {
+    color: var(--couleur-bouton-survol);
+}
+
+.card {
+    background-color: var(--fond-carte);
+    color: var(--texte-clair);
+    border: 2px solid var(--bordure);
+    border-radius: 22px;
+}
+
+.card-title,
+.card-text {
+    color: var(--texte-clair);
+}
+
+.card-text {
+    text-align: justify;
+}
+
+.btn-primary {
+    background-color: var(--couleur-bouton);
+    border-color: var(--couleur-bouton);
+    color: #111a2e;
+    font-weight: 600;
+    border-radius: 999px;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--couleur-bouton-survol);
+    border-color: var(--couleur-bouton-survol);
+    color: #111a2e;
+}
+
+input,
+textarea,
+select,
+.form-control,
+.form-select {
+    background-color: #0d1424 !important;
+    color: var(--texte-clair) !important;
+    border: 1px solid var(--bordure) !important;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+.form-control:focus,
+.form-select:focus {
+    background-color: #0d1424 !important;
+    color: var(--texte-clair) !important;
+    border-color: var(--couleur-bouton) !important;
+    box-shadow: none !important;
+}
+
+.form-text,
+.helptext {
+    color: var(--texte-secondaire) !important;
+}
+
+.asteriskField,
+.text-danger {
+    color: var(--couleur-bouton) !important;
+    font-weight: bold;
+}
+
+img.img-fluid {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    max-width: 220px;
+    height: 330px;
+    object-fit: contain;
+    border-radius: 24px;
+    border: 2px solid var(--bordure);
+    background-color: #0d1424;
+    padding: 0.4rem;
+}
+
+.username-highlight {
+    color: var(--couleur-bouton);
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+.welcome-box {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    border: 2px solid var(--bordure);
+    border-radius: 22px;
+    background-color: var(--fond-carte);
+}
+
+.welcome-box h1 {
+    margin-bottom: 0.5rem;
+}
+
+.welcome-box p {
+    margin-bottom: 0;
+    color: var(--texte-secondaire);
+}
+
+.ticket-layout {
+    padding: 1rem;
+}
+
+.ticket-text {
+    padding-left: 0.75rem;
+}
+
+.ticket-cover {
+    padding: 0.75rem;
+}

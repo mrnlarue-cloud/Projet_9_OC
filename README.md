@@ -162,8 +162,13 @@ Depuis cette page, l'utilisateur peut modifier ou supprimer ses propres publicat
 
 L'interface utilise Bootstrap et Crispy Forms.
 
-J'ai ajouté un style personnalisé directement dans le template de base, avec un thème sombre et des touches dorées.  
-L'objectif était de garder une interface simple, mais plus cohérente avec l'univers d'un site de critiques littéraires.
+Bootstrap est utilisé pour la mise en page, les boutons, les cartes et les espacements.  
+Crispy Forms permet d'afficher les formulaires Django de manière plus propre.
+
+Le style personnalisé de l'application est placé dans le fichier statique `litreview/static/style.css`.  
+Ce fichier est chargé dans le template `base.html` avec le système de fichiers statiques de Django.
+
+J'ai choisi un thème sombre avec des touches dorées, afin de donner une ambiance plus littéraire à l'application tout en gardant une interface simple et lisible.
 
 ---
 
@@ -200,6 +205,7 @@ Les autres comptes lecteurs présents dans la base peuvent être utilisés pour 
 - Django
 - SQLite
 - HTML
+- CSS
 - Bootstrap
 - Crispy Forms
 - Git
@@ -270,7 +276,7 @@ Le site est ensuite accessible à l'adresse suivante :
 http://127.0.0.1:8000/
 ```
 
-La racine du site redirige automatiquemnt vers la page d'accueil.
+La racine du site redirige automatiquement vers la page d'accueil.
 
 ---
 
@@ -322,45 +328,60 @@ Le désabonnement passe également par une page de confirmation.
 Projet_9/
 │
 ├── configuration/
+│   ├── __init__.py
+│   ├── asgi.py
 │   ├── settings.py
 │   ├── urls.py
 │   └── wsgi.py
 │
 ├── litreview/
 │   ├── migrations/
+│   │   ├── 0001_initial.py
+│   │   ├── 0002_alter_ticket_image.py
+│   │   └── __init__.py
+│   │
+│   ├── static/
+│   │   └── style.css
+│   │
 │   ├── templates/
 │   │   └── pages/
 │   │       ├── temp_partiels/
 │   │       │   ├── review.html
 │   │       │   ├── ticket.html
 │   │       │   └── ticket_reponse.html
-│   │       ├── accueil.html
 │   │       ├── abonnements.html
+│   │       ├── accueil.html
 │   │       ├── base.html
+│   │       ├── confirmer_desabonnement.html
+│   │       ├── confirmer_suppression_critique.html
+│   │       ├── confirmer_suppression_ticket.html
 │   │       ├── connexion.html
-│   │       ├── inscription.html
-│   │       ├── creer_ticket.html
 │   │       ├── creer_critique.html
 │   │       ├── creer_critique_avec_ticket.html
-│   │       ├── modifier_ticket.html
-│   │       ├── modifier_critique.html
+│   │       ├── creer_ticket.html
+│   │       ├── inscription.html
 │   │       ├── mes_posts.html
-│   │       ├── confirmer_desabonnement.html
-│   │       ├── confirmer_suppression_ticket.html
-│   │       └── confirmer_suppression_critique.html
+│   │       ├── modifier_critique.html
+│   │       └── modifier_ticket.html
 │   │
+│   ├── __init__.py
 │   ├── admin.py
 │   ├── apps.py
 │   ├── forms.py
 │   ├── models.py
+│   ├── tests.py
 │   ├── urls.py
 │   └── views.py
 │
 ├── media/
+│   └── tickets_images/
+│
+├── .flake8
+├── .gitignore
 ├── db.sqlite3
 ├── manage.py
-├── requirements.txt
-└── README.md
+├── README.md
+└── requirements.txt
 ```
 
 ---
